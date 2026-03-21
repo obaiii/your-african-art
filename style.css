@@ -177,8 +177,9 @@ footer{background:#1a1a1a;padding:60px 0 40px}
 .country-tab.active{background:var(--terracotta);color:#fff;border-color:var(--terracotta)}
 
 /* Room stage with photo backgrounds */
-.room-stage{width:100%;max-width:560px;position:relative}
-.room-box{position:relative;width:100%;border-radius:8px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.room-stage{width:100%;max-width:700px;position:relative}
+.room-stage-row{display:flex;align-items:center;gap:12px}
+.room-box{position:relative;flex:1;min-width:0;border-radius:8px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.15)}
 
 /* Room photo fills the box */
 .room-photo{width:100%;display:block;transition:opacity .4s}
@@ -191,14 +192,11 @@ footer{background:#1a1a1a;padding:60px 0 40px}
 .painting-overlay .painting-img.fading{opacity:0}
 .painting-overlay.coming-soon{display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);backdrop-filter:blur(4px)}
 
-/* Room label pill */
-.room-pill{position:absolute;top:10px;left:10px;z-index:10;background:rgba(0,0,0,.4);backdrop-filter:blur(10px);color:#fff;padding:5px 12px;border-radius:100px;font-size:.58rem;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;gap:6px}
-.room-pill-dot{width:5px;height:5px;border-radius:50%;background:var(--terracotta)}
+/* Room label pill — removed, region shown in tabs */
 
-/* Navigation arrows */
-.arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:10;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.3);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.3s}
-.arrow:hover{background:rgba(255,255,255,.2);transform:translateY(-50%) scale(1.1)}
-.arrow-l{left:10px}.arrow-r{right:10px}
+/* Navigation arrows — outside the room image */
+.arrow{flex-shrink:0;z-index:10;width:36px;height:36px;border-radius:50%;background:var(--beige);border:1px solid var(--beige-dark);color:var(--text-light);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.3s}
+.arrow:hover{background:var(--terracotta);color:#fff;border-color:var(--terracotta);transform:scale(1.1)}
 
 /* Info bar below the room */
 .room-info-bar{padding:12px 0 0}
@@ -296,8 +294,8 @@ footer{background:#1a1a1a;padding:60px 0 40px}
   .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
   .email-form{flex-direction:column}
   .email-form button{width:100%}
-  .arrow{width:40px;height:40px;font-size:1.1rem}
-  .arrow-l{left:6px}.arrow-r{right:6px}
+  .arrow{width:32px;height:32px;font-size:1rem}
+  .room-stage-row{gap:6px}
   .painting-info-row{flex-direction:column;text-align:center;gap:8px}
   .room-buy-btn{padding:7px 14px;font-size:.62rem;top:10px;right:10px}
   .product-grid{grid-template-columns:repeat(2,1fr);gap:16px}

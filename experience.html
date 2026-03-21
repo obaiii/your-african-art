@@ -62,26 +62,24 @@
   </div>
 
   <div class="room-stage fade-up">
-    <div class="room-box" id="roomBox">
-      <!-- Room photo background -->
-      <img class="room-photo" id="roomPhoto" src="images/room-west-africa.jpg" alt="Room interior">
-
-      <!-- Painting overlay -->
-      <div class="painting-overlay" id="paintingOverlay">
-        <img class="painting-img" id="paintingImg" src="images/g-joe-nigeria-17x19.jpg" alt="Artwork">
-      </div>
-
-      <!-- Room label pill (top-left) -->
-      <div class="room-pill">
-        <span class="room-pill-dot"></span>
-        <span id="roomLabel">Grand Hall &mdash; West Africa (Nigeria)</span>
-      </div>
-
-      <!-- Buy button pill (top-right) -->
-      <button class="room-buy-btn" id="roomBuyBtn">Buy &mdash; $149</button>
-
-      <!-- Navigation arrows -->
+    <div class="room-stage-row">
+      <!-- Left arrow outside image -->
       <button class="arrow arrow-l" id="prevBtn" aria-label="Previous">&#8249;</button>
+
+      <div class="room-box" id="roomBox">
+        <!-- Room photo background -->
+        <img class="room-photo" id="roomPhoto" src="images/room-west-africa.jpg" alt="Room interior">
+
+        <!-- Painting overlay -->
+        <div class="painting-overlay" id="paintingOverlay">
+          <img class="painting-img" id="paintingImg" src="images/g-joe-nigeria-17x19.jpg" alt="Artwork">
+        </div>
+
+        <!-- Buy button pill (top-right of image) -->
+        <button class="room-buy-btn" id="roomBuyBtn">Buy &mdash; $149</button>
+      </div>
+
+      <!-- Right arrow outside image -->
       <button class="arrow arrow-r" id="nextBtn" aria-label="Next">&#8250;</button>
     </div>
 
@@ -200,7 +198,7 @@ const paintingOverlay = document.getElementById('paintingOverlay');
 const paintingImg = document.getElementById('paintingImg');
 const paintingName = document.getElementById('paintingName');
 const paintingCountry = document.getElementById('paintingCountry');
-const roomLabel = document.getElementById('roomLabel');
+// Room label removed — region already shown in tabs
 const counterEl = document.getElementById('counter');
 const roomBuyBtn = document.getElementById('roomBuyBtn');
 
@@ -270,7 +268,7 @@ function updateRoom(animate) {
     roomPhoto.src = room.photo;
   }
 
-  roomLabel.innerHTML = room.label;
+  // Room label removed — region already shown in tabs
 
   // Default position from frame data (will be adjusted per painting)
   const f = room.frame;
