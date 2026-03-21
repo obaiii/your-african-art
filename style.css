@@ -205,10 +205,16 @@ footer{background:#1a1a1a;padding:60px 0 40px}
 .painting-country-label{color:var(--text-light);font-size:.62rem;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
 .painting-counter{color:var(--brown-light);font-size:.68rem;letter-spacing:1.5px}
 
-/* Room buy button — top-right pill matching room-pill */
-.room-buy-btn{position:absolute;top:10px;right:10px;z-index:10;background:rgba(34,120,60,.85);backdrop-filter:blur(10px);color:#fff;padding:6px 14px;border-radius:100px;font-size:.6rem;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;transition:.3s;border:none;animation:buyPulse 2s ease-in-out infinite}
+/* Room buy button — in info bar on mobile, overlaid on desktop */
+.room-buy-btn{background:rgba(34,120,60,.85);backdrop-filter:blur(10px);color:#fff;padding:6px 14px;border-radius:100px;font-size:.6rem;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;transition:.3s;border:none;animation:buyPulse 2s ease-in-out infinite}
 .room-buy-btn:hover{background:rgba(34,120,60,1);transform:scale(1.05);animation:none}
 @keyframes buyPulse{0%,100%{box-shadow:0 0 0 0 rgba(34,120,60,.5);transform:scale(1)}50%{box-shadow:0 0 0 10px rgba(34,120,60,0);transform:scale(1.06)}}
+
+/* On desktop, float the buy button to top-right of the room stage */
+@media(min-width:769px){
+  .room-stage{position:relative}
+  .room-buy-btn{position:absolute;top:10px;right:10px;z-index:20}
+}
 
 /* ===== ABOUT PAGE ===== */
 .about-story{padding:80px 0;background:var(--warm-white)}
@@ -297,7 +303,7 @@ footer{background:#1a1a1a;padding:60px 0 40px}
   .arrow{width:32px;height:32px;font-size:1rem}
   .room-stage-row{gap:6px}
   .painting-info-row{flex-direction:column;text-align:center;gap:8px}
-  .room-buy-btn{padding:7px 14px;font-size:.62rem;top:10px;right:10px}
+  .room-buy-btn{padding:8px 18px;font-size:.7rem}
   .product-grid{grid-template-columns:repeat(2,1fr);gap:16px}
   .shop-product-grid{grid-template-columns:repeat(2,1fr);gap:16px}
   .ig-profile-inner{flex-direction:column;text-align:center;gap:16px}
