@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delivery &amp; Care | Your African Art</title>
+<meta name="description" content="Everything you need to know about how your African art is shipped, how to unpack it, and how to stretch or mount your canvas painting.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="shortcut icon" href="favicon.ico?v=3" type="image/x-icon">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=3">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png?v=3">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=3">
+<link rel="mask-icon" href="mask-icon.svg" color="#C46E4E">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png?v=3">
+<style>
+/* Delivery page tabs */
+.delivery-tabs{display:flex;justify-content:center;gap:8px;margin-bottom:48px;flex-wrap:wrap}
+.delivery-tab{padding:12px 28px;border-radius:100px;font-size:.82rem;font-weight:500;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;transition:.3s;border:1.5px solid var(--beige-dark);background:transparent;color:var(--text-light);font-family:'Inter',sans-serif}
+.delivery-tab:hover{border-color:var(--charcoal);color:var(--charcoal)}
+.delivery-tab.active{background:var(--charcoal);color:#fff;border-color:var(--charcoal)}
+.delivery-panel{display:none}
+.delivery-panel.active{display:block}
+
+/* Step cards */
+.step-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;margin:32px 0 48px}
+.step-card{background:var(--cream);border-radius:16px;padding:32px;position:relative}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--terracotta);color:#fff;font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;margin-bottom:16px}
+.step-card h3{font-size:1.1rem;color:var(--charcoal);margin-bottom:10px}
+.step-card p{font-size:.9rem;color:var(--text-light);line-height:1.7;font-weight:300}
+
+/* Info box */
+.info-box{background:var(--cream);border-left:4px solid var(--terracotta);border-radius:0 12px 12px 0;padding:24px 28px;margin:24px 0;font-size:.9rem;color:var(--text);line-height:1.7}
+.info-box strong{color:var(--charcoal);font-weight:600}
+
+/* Tube size table */
+.tube-table-wrap{overflow-x:auto;margin:24px 0 40px;border-radius:12px;border:1px solid var(--beige-dark)}
+.tube-table{width:100%;border-collapse:collapse;font-size:.85rem}
+.tube-table thead{background:var(--charcoal);color:#fff}
+.tube-table th{padding:14px 16px;text-align:left;font-weight:500;letter-spacing:.3px;text-transform:uppercase;font-size:.75rem}
+.tube-table td{padding:12px 16px;border-bottom:1px solid var(--beige);color:var(--text)}
+.tube-table tbody tr:last-child td{border-bottom:none}
+.tube-table tbody tr:nth-child(even){background:var(--cream)}
+.tube-table tbody tr:hover{background:var(--beige)}
+
+/* Content sections */
+.delivery-content{max-width:800px;margin:0 auto}
+.delivery-content h2{font-size:1.5rem;color:var(--charcoal);margin-bottom:16px;margin-top:40px}
+.delivery-content h2:first-child{margin-top:0}
+.delivery-content p{font-size:.92rem;color:var(--text-light);line-height:1.8;font-weight:300;margin-bottom:16px}
+.delivery-content ul{margin:16px 0 24px 24px;font-size:.92rem;color:var(--text-light);line-height:2;font-weight:300}
+.delivery-content li{margin-bottom:4px}
+
+/* Warning box */
+.warning-box{background:#FFF3E0;border-left:4px solid #FF9800;border-radius:0 12px 12px 0;padding:24px 28px;margin:24px 0;font-size:.9rem;color:var(--text);line-height:1.7}
+.warning-box strong{color:#E65100;font-weight:600}
+
+/* Supplies list */
+.supplies-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:20px 0 32px}
+.supply-item{background:var(--cream);border-radius:12px;padding:20px;text-align:center;font-size:.88rem;color:var(--text);font-weight:400}
+.supply-item span{display:block;font-size:1.4rem;margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo-link"><img src="images/logo.png" alt="Your African Art" class="nav-logo"></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="shop.html">Shop</a>
+      <a href="experience.html">Experience</a>
+      <a href="delivery.html" class="active">Delivery</a>
+      <a href="faq.html">FAQ</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <a href="shop.html" class="nav-cta">Shop Now</a>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html" onclick="closeMobile()">Home</a>
+  <a href="about.html" onclick="closeMobile()">About</a>
+  <a href="shop.html" onclick="closeMobile()">Shop</a>
+  <a href="experience.html" onclick="closeMobile()">Experience</a>
+  <a href="delivery.html" class="active" onclick="closeMobile()">Delivery</a>
+  <a href="faq.html" onclick="closeMobile()">FAQ</a>
+  <a href="contact.html" onclick="closeMobile()">Contact</a>
+</div>
+
+<!-- HEADER -->
+<section class="page-header">
+  <span class="section-tag fade-up">Delivery &amp; Care</span>
+  <h1 class="fade-up">From Our Studio to Your Wall</h1>
+  <p class="fade-up">How we pack, ship and protect your art &mdash; and how to stretch and mount it once it arrives.</p>
+</section>
+
+<!-- TABS -->
+<section class="faq-section">
+  <div class="container">
+    <div class="delivery-tabs fade-up">
+      <button class="delivery-tab active" data-tab="shipping">Shipping &amp; Packaging</button>
+      <button class="delivery-tab" data-tab="unpacking">Unpacking Your Art</button>
+      <button class="delivery-tab" data-tab="mounting">Stretching &amp; Mounting</button>
+    </div>
+
+    <!-- ============ TAB 1: SHIPPING & PACKAGING ============ -->
+    <div class="delivery-panel active" id="panel-shipping">
+      <div class="delivery-content">
+        <h2>How We Ship</h2>
+        <p>Every painting is carefully rolled (paint side out to prevent cracking) and placed inside a sturdy <strong>2-inch (5 cm) diameter PVC tube</strong>. PVC tubes are used because they can withstand the rigours of international shipping &mdash; they're waterproof, crush-resistant, and protect the canvas from bending or puncture damage.</p>
+        <p>Each tube is custom-cut to match the painting inside. The tube length is based on the <strong>shortest dimension</strong> of the painting plus a small margin, since the canvas is rolled along its longer side. End caps are sealed with tape for extra security, and a layer of tissue paper separates the painted surface from itself inside the roll.</p>
+
+        <div class="info-box">
+          <strong>Shipping carrier:</strong> DHL or FedEx International<br>
+          <strong>Delivery time:</strong> 7&ndash;14 business days<br>
+          <strong>Flat rate:</strong> $30 USD (approximately &pound;24 GBP / &euro;28 EUR)<br>
+          <strong>Ships from:</strong> Nigeria
+        </div>
+
+        <h2>Tube Sizes by Painting</h2>
+        <p>Each order confirmation email includes the exact tube dimensions for your painting. Here is the full reference table:</p>
+
+        <div class="tube-table-wrap">
+          <table class="tube-table">
+            <thead>
+              <tr>
+                <th>Painting</th>
+                <th>Canvas Size (in)</th>
+                <th>Tube Length</th>
+                <th>Tube Diameter</th>
+                <th>Est. Weight</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Nigerian Artist</td><td>8 &times; 6</td><td>8&Prime; (20 cm)</td><td>2&Prime;</td><td>~0.5 lb</td></tr>
+              <tr><td>Nigerian Artist II</td><td>8 &times; 6</td><td>8&Prime; (20 cm)</td><td>2&Prime;</td><td>~0.5 lb</td></tr>
+              <tr><td>Hamid Kadiri II</td><td>10.5 &times; 8</td><td>10&Prime; (25 cm)</td><td>2&Prime;</td><td>~0.6 lb</td></tr>
+              <tr><td>Hassan Wakif</td><td>25.5 &times; 9.5</td><td>11.5&Prime; (29 cm)</td><td>2&Prime;</td><td>~0.7 lb</td></tr>
+              <tr><td>Hassan Wakif II</td><td>25.5 &times; 9.5</td><td>11.5&Prime; (29 cm)</td><td>2&Prime;</td><td>~0.7 lb</td></tr>
+              <tr><td>Hamid Kadiri</td><td>11.8 &times; 15.8</td><td>14&Prime; (36 cm)</td><td>2&Prime;</td><td>~0.8 lb</td></tr>
+              <tr><td>Malawi Artist</td><td>13 &times; 34</td><td>15&Prime; (38 cm)</td><td>2&Prime;</td><td>~1.0 lb</td></tr>
+              <tr><td>Zinat</td><td>14 &times; 25</td><td>16&Prime; (41 cm)</td><td>2&Prime;</td><td>~1.0 lb</td></tr>
+              <tr><td>Kibuuka</td><td>15.25 &times; 29</td><td>17&Prime; (43 cm)</td><td>2&Prime;</td><td>~1.1 lb</td></tr>
+              <tr><td>Atarci</td><td>22.5 &times; 16</td><td>18&Prime; (46 cm)</td><td>2&Prime;</td><td>~1.1 lb</td></tr>
+              <tr><td>G. Joe</td><td>17 &times; 19</td><td>19&Prime; (48 cm)</td><td>2&Prime;</td><td>~1.2 lb</td></tr>
+              <tr><td>G. Joe II</td><td>17 &times; 19</td><td>19&Prime; (48 cm)</td><td>2&Prime;</td><td>~1.2 lb</td></tr>
+              <tr><td>East Africa III</td><td>27 &times; 17</td><td>19&Prime; (48 cm)</td><td>2&Prime;</td><td>~1.2 lb</td></tr>
+              <tr><td>G. Joe III</td><td>19.5 &times; 17.5</td><td>19.5&Prime; (50 cm)</td><td>2&Prime;</td><td>~1.2 lb</td></tr>
+              <tr><td>East Africa I</td><td>29 &times; 18</td><td>20&Prime; (51 cm)</td><td>2&Prime;</td><td>~1.3 lb</td></tr>
+              <tr><td>East Africa II</td><td>26 &times; 19</td><td>21&Prime; (53 cm)</td><td>2&Prime;</td><td>~1.3 lb</td></tr>
+              <tr><td>C. Mutsiwa</td><td>19.5 &times; 27</td><td>21.5&Prime; (55 cm)</td><td>2&Prime;</td><td>~1.4 lb</td></tr>
+              <tr><td>Kibuuka Steven</td><td>21 &times; 47</td><td>23&Prime; (58 cm)</td><td>2&Prime;</td><td>~1.5 lb</td></tr>
+              <tr><td>Malawi Artist III</td><td>32 &times; 22</td><td>24&Prime; (61 cm)</td><td>2&Prime;</td><td>~1.5 lb</td></tr>
+              <tr><td>Malawi Artist II</td><td>23 &times; 31</td><td>25&Prime; (64 cm)</td><td>2&Prime;</td><td>~1.6 lb</td></tr>
+              <tr><td>East Africa IV</td><td>37 &times; 25</td><td>27&Prime; (69 cm)</td><td>2&Prime;</td><td>~1.7 lb</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="info-box">
+          <strong>Note on special items:</strong> Some pieces &mdash; such as framed works, mirrors with doors, or sculptures &mdash; cannot be rolled and will be shipped in custom protective packaging. These items are clearly marked on their product pages with separate packaging and shipping details.
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ TAB 2: UNPACKING YOUR ART ============ -->
+    <div class="delivery-panel" id="panel-unpacking">
+      <div class="delivery-content">
+        <h2>Opening the Tube</h2>
+
+        <div class="step-grid">
+          <div class="step-card fade-up">
+            <div class="step-num">1</div>
+            <h3>Remove the End Caps</h3>
+            <p>Carefully peel off any tape securing the end caps. Use a blunt tool or your fingers &mdash; avoid using a sharp blade near the opening as it could nick the canvas inside.</p>
+          </div>
+          <div class="step-card fade-up">
+            <div class="step-num">2</div>
+            <h3>Slide Out the Canvas</h3>
+            <p>Gently slide the rolled canvas out of the tube. It may be a snug fit &mdash; tilt the tube and let gravity help rather than pulling or tugging on the canvas.</p>
+          </div>
+          <div class="step-card fade-up">
+            <div class="step-num">3</div>
+            <h3>Unroll on a Clean Surface</h3>
+            <p>Lay the canvas on a clean, flat surface (a table or clean floor). Unroll it slowly, <strong>paint side up</strong>. Place soft weights (books, mugs) on the corners to hold it flat.</p>
+          </div>
+        </div>
+
+        <h2>Letting the Canvas Relax</h2>
+        <p>After being rolled for shipping, the canvas will have a natural curve. This is completely normal and not a defect. Leave the canvas unrolled and flat with gentle weights on the corners for <strong>24&ndash;48 hours</strong>. The canvas will gradually relax and flatten on its own.</p>
+
+        <div class="warning-box">
+          <strong>Do not iron or apply direct heat</strong> to the painted surface. Heat can damage the paint, cause cracking, or alter the colours. If there are minor creases, they will flatten during the stretching process, or your framer can address them.
+        </div>
+
+        <h2>Handling Tips</h2>
+        <ul>
+          <li>Always handle the canvas by the edges &mdash; avoid touching the painted surface with bare fingers, as oils from your skin can affect the paint over time.</li>
+          <li>If you need to re-roll the canvas temporarily, always roll it <strong>paint side out</strong> (facing outward). Rolling paint-side-in causes the paint to compress and can lead to cracking.</li>
+          <li>Store unframed canvases in a cool, dry place away from direct sunlight and moisture.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ============ TAB 3: STRETCHING & MOUNTING ============ -->
+    <div class="delivery-panel" id="panel-mounting">
+      <div class="delivery-content">
+        <h2>Option 1: Professional Framer</h2>
+        <p>The easiest way to mount your canvas is to take it to a local framing shop. A framer will stretch the canvas onto wooden stretcher bars and can also add a frame if you wish. This typically costs between $20&ndash;$60 depending on the painting size and your location, and takes 2&ndash;5 days.</p>
+        <p>Tell your framer the painting dimensions (listed on the product page and in your order confirmation) so they can prepare stretcher bars in advance. This speeds up the process.</p>
+
+        <h2>Option 2: DIY Stretching</h2>
+        <p>Stretching a canvas yourself is straightforward and rewarding. Here's what you'll need and how to do it:</p>
+
+        <h3 style="font-size:1rem;color:var(--terracotta);margin:24px 0 12px;font-family:'Playfair Display',serif">What You'll Need</h3>
+        <div class="supplies-grid">
+          <div class="supply-item"><span>&#x1f4cf;</span>Wooden stretcher bars (matching your painting size)</div>
+          <div class="supply-item"><span>&#x1f528;</span>Staple gun &amp; staples (or canvas tacks)</div>
+          <div class="supply-item"><span>&#x2702;&#xfe0f;</span>Scissors or craft knife</div>
+          <div class="supply-item"><span>&#x1f9f0;</span>Canvas pliers (optional but helpful)</div>
+        </div>
+
+        <div class="step-grid">
+          <div class="step-card fade-up">
+            <div class="step-num">1</div>
+            <h3>Assemble the Frame</h3>
+            <p>Slot the stretcher bars together at right angles. Use a carpenter's square or measure diagonals to ensure the frame is perfectly square. Tap the corners with a rubber mallet if needed.</p>
+          </div>
+          <div class="step-card fade-up">
+            <div class="step-num">2</div>
+            <h3>Centre the Canvas</h3>
+            <p>Lay the canvas paint-side down on a clean surface. Place the assembled frame on top, centred so there's equal excess canvas on all four sides (at least 1.5 inches per side for wrapping).</p>
+          </div>
+          <div class="step-card fade-up">
+            <div class="step-num">3</div>
+            <h3>Staple the First Side</h3>
+            <p>Fold the canvas over the centre of one long side and place a single staple. Pull the canvas taut (not overly tight) across to the opposite side and staple the centre there. Repeat for the two short sides. You should now have 4 staples &mdash; one centred on each side.</p>
+          </div>
+          <div class="step-card fade-up">
+            <div class="step-num">4</div>
+            <h3>Work Outward</h3>
+            <p>Continue adding staples every 2&ndash;3 inches, working from the centre of each side outward toward the corners. Alternate sides (top, bottom, left, right) to keep tension even. Use canvas pliers for a tighter stretch if desired.</p>
+          </div>
+          <div class="step-card fade-up">
+            <div class="step-num">5</div>
+            <h3>Fold the Corners</h3>
+            <p>At each corner, fold the canvas neatly &mdash; like wrapping a gift. Pull one flap over, then fold the other on top. Staple to secure. Trim any excess canvas if needed.</p>
+          </div>
+          <div class="step-card fade-up">
+            <div class="step-num">6</div>
+            <h3>Final Check</h3>
+            <p>Flip the canvas over and check the surface is taut and even. If there are any loose areas, gently tap in the wooden wedges (keys) that come with most stretcher bars to tighten the stretch. Hang and enjoy!</p>
+          </div>
+        </div>
+
+        <h2>Option 3: Gallery Wrap (No Frame)</h2>
+        <p>A gallery wrap means the canvas wraps around the sides of the stretcher bars, giving a clean, modern look with no frame needed. This is the same as the DIY method above &mdash; the painted canvas simply continues over the edges of the frame. It's the most popular way to display canvas art in contemporary homes.</p>
+
+        <h2>Option 4: Mount Without Stretching</h2>
+        <p>If you prefer not to stretch the canvas at all, you can also display it by:</p>
+        <ul>
+          <li><strong>Pinning to a wall:</strong> Use small, unobtrusive pins at the corners and let the canvas hang flat against the wall for a relaxed, bohemian look.</li>
+          <li><strong>Clipboard or hanger mount:</strong> Attach the top edge to a wooden dowel or pants hanger for a scroll-like hanging style.</li>
+          <li><strong>Adhesive mounting:</strong> Apply the canvas directly to a board (foam board or MDF) using spray adhesive for a flat, frameless finish.</li>
+        </ul>
+
+        <div class="info-box">
+          <strong>Need help?</strong> If you have any questions about stretching or mounting your painting, don't hesitate to <a href="contact.html" style="color:var(--terracotta);text-decoration:none;font-weight:500">contact us</a>. We're happy to walk you through the process or recommend a framer near you.
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="faq-footer fade-up">
+      <h2>Ready to find your piece?</h2>
+      <p>Browse our collection of original African paintings.</p>
+      <a href="shop.html" class="btn btn-primary">Shop Now</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="images/logo.png" alt="Your African Art" class="footer-logo-img">
+        <p>African art to the world!</p>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <a href="shop.html">All Paintings</a>
+        <a href="shop.html#west-africa">West Africa</a>
+        <a href="shop.html#north-africa">North Africa</a>
+        <a href="shop.html#central-africa">Central Africa</a>
+        <a href="shop.html#east-africa">East Africa</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="about.html">About Us</a>
+        <a href="experience.html">Experience</a>
+        <a href="delivery.html">Delivery &amp; Care</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="https://instagram.com/yourafricanart" target="_blank">Instagram</a>
+        <a href="mailto:hello@yourafricanart.com">Email Us</a>
+      </div>
+    </div>
+    <div class="footer-divider"></div>
+    <p class="footer-bottom">&copy; 2026 Your African Art. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+// Tab switching
+document.querySelectorAll('.delivery-tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.delivery-tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.delivery-panel').forEach(function(p) { p.classList.remove('active'); });
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+  });
+});
+</script>
+<script src="shared.js"></script>
+</body>
+</html>
