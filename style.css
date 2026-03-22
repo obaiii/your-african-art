@@ -287,8 +287,8 @@ footer{background:#1a1a1a;padding:60px 0 40px}
 /* ===== RESPONSIVE ===== */
 @media(max-width:768px){
   .nav-links,.nav-cta{display:none}
-  .hamburger{display:block}
-  .nav-logo{height:120px;top:20px}
+  .hamburger{display:block;margin-left:auto}
+  .nav-logo{height:50px;top:0;filter:none}
   .hero-content{grid-template-columns:1fr;gap:40px;text-align:center;padding-top:40px}
   .hero-sub{margin:0 auto 40px}
   .hero-actions{justify-content:center}
@@ -314,7 +314,7 @@ footer{background:#1a1a1a;padding:60px 0 40px}
   .ig-post-caption{display:none}
 }
 @media(max-width:480px){
-  .nav-logo{height:100px;top:16px}
+  .nav-logo{height:44px;top:0}
   .country-tab{padding:7px 14px;font-size:.65rem}
   .product-grid{grid-template-columns:1fr 1fr;gap:12px}
   .shop-product-grid{grid-template-columns:1fr;gap:20px}
