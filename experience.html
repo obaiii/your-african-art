@@ -16,6 +16,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=3">
 <link rel="mask-icon" href="mask-icon.svg" color="#C46E4E">
 <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png?v=3">
+<script src="https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js"></script>
 </head>
 <body>
 
@@ -139,11 +140,11 @@ const rooms = {
     // Frame position as % of room image (top, left, width, height)
     frame: { top: 6, left: 40, width: 22, height: 34 },
     paintings: [
-      { src:'images/g-joe-nigeria-17x19.jpg', title:'G. Joe', origin:'Nigeria', price:149, realW:17, realH:19, medium:'Oil on Velvet' },
-      { src:'images/g-joe-nigeria-17x19-2.jpg', title:'G. Joe II', origin:'Nigeria', price:149, realW:17, realH:19, medium:'Oil on Velvet' },
-      { src:'images/g-joe-nigeria-19.5x17.5.jpg', title:'G. Joe III', origin:'Nigeria', price:139, realW:19.5, realH:17.5, medium:'Oil on Velvet' },
-      { src:'images/nigerian-artist-16x12.jpg', title:'Nigerian Artist', origin:'Nigeria', price:129, realW:8, realH:6, medium:'Horn on Velvet' },
-      { src:'images/nigerian-artist-16x12-2.jpg', title:'Nigerian Artist II', origin:'Nigeria', price:129, realW:8, realH:6, medium:'Horn on Velvet' }
+      { src:'images/g-joe-nigeria-17x19.jpg', title:'G. Joe', origin:'Nigeria', price:82, realW:17, realH:19, medium:'Oil on Velvet', handle:'g-joe' },
+      { src:'images/g-joe-nigeria-17x19-2.jpg', title:'G. Joe II', origin:'Nigeria', price:82, realW:17, realH:19, medium:'Oil on Velvet', handle:'g-joe-2' },
+      { src:'images/g-joe-nigeria-19.5x17.5.jpg', title:'G. Joe III', origin:'Nigeria', price:82, realW:19.5, realH:17.5, medium:'Oil on Velvet', handle:'g-joe-3' },
+      { src:'images/nigerian-artist-16x12.jpg', title:'Nigerian Artist', origin:'Nigeria', price:78, realW:8, realH:6, medium:'Horn on Velvet', handle:'nigerian-artist' },
+      { src:'images/nigerian-artist-16x12-2.jpg', title:'Nigerian Artist II', origin:'Nigeria', price:78, realW:8, realH:6, medium:'Horn on Velvet', handle:'nigerian-artist-2' }
     ]
   },
   'north-africa': {
@@ -151,12 +152,12 @@ const rooms = {
     photo: 'images/room-north-africa.jpg',
     frame: { top: 14, left: 27, width: 41, height: 24 },
     paintings: [
-      { src:'images/atarci-morocco-22.5x16.jpg', title:'Atarci', origin:'Morocco', price:129, realW:22.5, realH:16, medium:'Charcoal on Canvas' },
-      { src:'images/zinat-morocco-14x25.jpg', title:'Zinat', origin:'Morocco', price:149, realW:14, realH:25, medium:'Oil on Canvas' },
-      { src:'images/hamid-kadiri-morocco-11.8x15.8.jpg', title:'Hamid Kadiri', origin:'Morocco', price:189, realW:11.8, realH:15.8, medium:'Oil on Canvas' },
-      { src:'images/hamid-kadiri-morocco-10.5x8.jpg', title:'Hamid Kadiri II', origin:'Morocco', price:159, realW:10.5, realH:8, medium:'Oil on Canvas' },
-      { src:'images/hassan-wakif-morocco-25.5x9.5.jpg', title:'Hassan Wakif', origin:'Morocco', price:169, realW:25.5, realH:9.5, medium:'Oil on Canvas' },
-      { src:'images/hassan-wakif-morocco-25.5x9.5-2.jpg', title:'Hassan Wakif II', origin:'Morocco', price:169, realW:25.5, realH:9.5, medium:'Oil on Canvas' }
+      { src:'images/atarci-morocco-22.5x16.jpg', title:'Atarci', origin:'Morocco', price:83, realW:22.5, realH:16, medium:'Charcoal on Canvas', handle:'atarci' },
+      { src:'images/zinat-morocco-14x25.jpg', title:'Zinat', origin:'Morocco', price:82, realW:14, realH:25, medium:'Oil on Canvas', handle:'zinat' },
+      { src:'images/hamid-kadiri-morocco-11.8x15.8.jpg', title:'Hamid Kadiri', origin:'Morocco', price:78, realW:11.8, realH:15.8, medium:'Oil on Canvas', handle:'hamid-kadiri' },
+      { src:'images/hamid-kadiri-morocco-10.5x8.jpg', title:'Hamid Kadiri II', origin:'Morocco', price:75, realW:10.5, realH:8, medium:'Oil on Canvas', handle:'hamid-kadiri-2' },
+      { src:'images/hassan-wakif-morocco-25.5x9.5.jpg', title:'Hassan Wakif', origin:'Morocco', price:79, realW:25.5, realH:9.5, medium:'Oil on Canvas', handle:'hassan-wakif' },
+      { src:'images/hassan-wakif-morocco-25.5x9.5-2.jpg', title:'Hassan Wakif II', origin:'Morocco', price:79, realW:25.5, realH:9.5, medium:'Oil on Canvas', handle:'hassan-wakif-2' }
     ]
   },
   'central-africa': {
@@ -170,12 +171,12 @@ const rooms = {
     photo: 'images/room-east-africa.jpg',
     frame: { top: 21, left: 28, width: 43, height: 30 },
     paintings: [
-      { src:'images/east-africa-29x18.jpg', title:'East Africa I', origin:'East Africa', price:159, realW:29, realH:18, medium:'Oil on Canvas' },
-      { src:'images/east-africa-26x19.jpg', title:'East Africa II', origin:'East Africa', price:159, realW:26, realH:19, medium:'Oil on Canvas' },
-      { src:'images/east-africa-27x17.jpg', title:'East Africa III', origin:'East Africa', price:159, realW:27, realH:17, medium:'Oil on Canvas' },
-      { src:'images/east-africa-37x25.jpg', title:'East Africa IV', origin:'East Africa', price:179, realW:37, realH:25, medium:'Oil on Canvas' },
-      { src:'images/kibuuka-uganda-15.25x29.jpg', title:'Kibuuka', origin:'Uganda', price:149, realW:15.25, realH:29, medium:'Oil on Canvas' },
-      { src:'images/kibuuka-steven-uganda-21x47.jpg', title:'Kibuuka Steven', origin:'Uganda', price:199, realW:21, realH:47, medium:'Oil on Canvas' }
+      { src:'images/east-africa-29x18.jpg', title:'East Africa I', origin:'East Africa', price:87, realW:29, realH:18, medium:'Oil on Canvas', handle:'east-africa-1' },
+      { src:'images/east-africa-26x19.jpg', title:'East Africa II', origin:'East Africa', price:86, realW:26, realH:19, medium:'Oil on Canvas', handle:'east-africa-2' },
+      { src:'images/east-africa-27x17.jpg', title:'East Africa III', origin:'East Africa', price:85, realW:27, realH:17, medium:'Oil on Canvas', handle:'east-africa-3' },
+      { src:'images/east-africa-37x25.jpg', title:'East Africa IV', origin:'East Africa', price:98, realW:37, realH:25, medium:'Oil on Canvas', handle:'east-africa-4' },
+      { src:'images/kibuuka-uganda-15.25x29.jpg', title:'Kibuuka', origin:'Uganda', price:85, realW:15.25, realH:29, medium:'Oil on Canvas', handle:'kibuuka' },
+      { src:'images/kibuuka-steven-uganda-21x47.jpg', title:'Kibuuka Steven', origin:'Uganda', price:100, realW:21, realH:47, medium:'Oil on Canvas', handle:'kibuuka-steven' }
     ]
   },
   'southern-africa': {
@@ -183,10 +184,10 @@ const rooms = {
     photo: 'images/room-southern-africa.jpg',
     frame: { top: 25, left: 30, width: 45, height: 27 },
     paintings: [
-      { src:'images/mutsiwa-zimbabwe-19.5x27.jpg', title:'C. Mutsiwa', origin:'Zimbabwe', price:179, realW:19.5, realH:27, medium:'Oil on Canvas' },
-      { src:'images/malawi-artist-13x34.jpg', title:'Malawi Artist', origin:'Malawi', price:129, realW:13, realH:34, medium:'Oil on Canvas' },
-      { src:'images/malawi-artist-23x31.jpg', title:'Malawi Artist II', origin:'Malawi', price:159, realW:23, realH:31, medium:'Oil on Canvas' },
-      { src:'images/malawi-artist-32x22.jpg', title:'Malawi Artist III', origin:'Malawi', price:159, realW:32, realH:22, medium:'Oil on Canvas' }
+      { src:'images/mutsiwa-zimbabwe-19.5x27.jpg', title:'C. Mutsiwa', origin:'Zimbabwe', price:87, realW:19.5, realH:27, medium:'Oil on Canvas', handle:'mutsiwa' },
+      { src:'images/malawi-artist-13x34.jpg', title:'Malawi Artist', origin:'Malawi', price:85, realW:13, realH:34, medium:'Oil on Canvas', handle:'malawi-1' },
+      { src:'images/malawi-artist-23x31.jpg', title:'Malawi Artist II', origin:'Malawi', price:92, realW:23, realH:31, medium:'Oil on Canvas', handle:'malawi-2' },
+      { src:'images/malawi-artist-32x22.jpg', title:'Malawi Artist III', origin:'Malawi', price:92, realW:32, realH:22, medium:'Oil on Canvas', handle:'malawi-3' }
     ]
   }
 };
@@ -320,7 +321,7 @@ function updateRoom(animate) {
   counterEl.textContent = `${currentIdx + 1} / ${room.paintings.length}`;
   roomBuyBtn.innerHTML = `Buy &mdash; $${p.price}`;
   roomBuyBtn.onclick = () => {
-    alert(`Added "${p.title}" ($${p.price}) to cart.\n\nShopify checkout will be connected here.`);
+    handleBuy(p.handle, p.title, p.price);
   };
 }
 
@@ -378,6 +379,76 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft') document.getElementById('prevBtn').click();
   if (e.key === 'ArrowRight') document.getElementById('nextBtn').click();
 });
+
+// Shopify Buy Button Integration
+const SHOPIFY_DOMAIN = '7sxcj5-di.myshopify.com';
+const SHOPIFY_TOKEN = '6a68321e8b0de58e7df8870b268858eb';
+
+const shopifyProducts = {
+  'atarci': '8463596224673',
+  'zinat': '8463596257441',
+  'hamid-kadiri': '8463596290209',
+  'hamid-kadiri-2': '8463596322977',
+  'hassan-wakif': '8463596355745',
+  'hassan-wakif-2': '8463596388513',
+  'g-joe': '8463596421281',
+  'g-joe-2': '8463596454049',
+  'g-joe-3': '8463596486817',
+  'nigerian-artist': '8463596519585',
+  'nigerian-artist-2': '8463596552353',
+  'east-africa-1': '8463596585121',
+  'east-africa-2': '8463596617889',
+  'east-africa-3': '8463596650657',
+  'east-africa-4': '8463596683425',
+  'kibuuka': '8463596716193',
+  'kibuuka-steven': '8463596748961',
+  'mutsiwa': '8463596814497',
+  'malawi-1': '8463596847265',
+  'malawi-2': '8463596880033',
+  'malawi-3': '8463596912801'
+};
+
+let shopifyClient = null;
+
+function initShopify() {
+  if (window.ShopifyBuy && !shopifyClient) {
+    shopifyClient = ShopifyBuy.buildClient({
+      domain: SHOPIFY_DOMAIN,
+      storefrontAccessToken: SHOPIFY_TOKEN,
+    });
+  }
+}
+
+function handleBuy(id, title, price) {
+  if (!shopifyClient) {
+    initShopify();
+    if (!shopifyClient) {
+      window.open('https://' + SHOPIFY_DOMAIN + '/products/' + id, '_blank');
+      return;
+    }
+  }
+
+  const shopifyId = shopifyProducts[id];
+  if (!shopifyId) {
+    window.open('https://' + SHOPIFY_DOMAIN, '_blank');
+    return;
+  }
+
+  const storefrontId = btoa('gid://shopify/Product/' + shopifyId);
+
+  shopifyClient.product.fetch(storefrontId).then(function(product) {
+    const variant = product.variants[0];
+    shopifyClient.checkout.create().then(function(checkout) {
+      const lineItems = [{ variantId: variant.id, quantity: 1 }];
+      shopifyClient.checkout.addLineItems(checkout.id, lineItems).then(function(checkout) {
+        window.location.href = checkout.webUrl;
+      });
+    });
+  }).catch(function(err) {
+    console.error('Shopify error:', err);
+    window.open('https://' + SHOPIFY_DOMAIN + '/products/' + id, '_blank');
+  });
+}
 </script>
 <script src="shared.js"></script>
 </body>

@@ -16,6 +16,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=3">
 <link rel="mask-icon" href="mask-icon.svg" color="#C46E4E">
 <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png?v=3">
+<script src="https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js"></script>
 </head>
 <body>
 
@@ -78,16 +79,6 @@
   </div>
 </section>
 
-<!-- Shopify Buy Button script placeholder -->
-<!--
-  TO INTEGRATE SHOPIFY:
-  1. In Shopify Admin, go to Sales Channels > Buy Button
-  2. Create a Buy Button for each product
-  3. Replace the buy-btn onclick handlers below with Shopify's
-     ShopifyBuy.UI.onReady(client) integration
-  4. Or use Shopify Storefront API + JS Buy SDK:
-     <script src="https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js"></script>
--->
 
 <footer>
   <div class="container">
@@ -124,30 +115,30 @@
 <script>
 const paintings = [
   // North Africa — Morocco
-  { id:'atarci', src:'images/atarci-morocco-22.5x16.jpg', title:'Atarci', origin:'Morocco', region:'north-africa', price:129, size:'22.5 × 16 in', medium:'Charcoal on Canvas' },
-  { id:'zinat', src:'images/zinat-morocco-14x25.jpg', title:'Zinat', origin:'Morocco', region:'north-africa', price:149, size:'14 × 25 in', medium:'Oil on Canvas' },
-  { id:'hamid-kadiri', src:'images/hamid-kadiri-morocco-11.8x15.8.jpg', title:'Hamid Kadiri', origin:'Morocco', region:'north-africa', price:189, size:'11.8 × 15.8 in', medium:'Oil on Canvas' },
-  { id:'hamid-kadiri-2', src:'images/hamid-kadiri-morocco-10.5x8.jpg', title:'Hamid Kadiri II', origin:'Morocco', region:'north-africa', price:159, size:'10.5 × 8 in', medium:'Oil on Canvas' },
-  { id:'hassan-wakif', src:'images/hassan-wakif-morocco-25.5x9.5.jpg', title:'Hassan Wakif', origin:'Morocco', region:'north-africa', price:169, size:'25.5 × 9.5 in', medium:'Oil on Canvas' },
-  { id:'hassan-wakif-2', src:'images/hassan-wakif-morocco-25.5x9.5-2.jpg', title:'Hassan Wakif II', origin:'Morocco', region:'north-africa', price:169, size:'25.5 × 9.5 in', medium:'Oil on Canvas' },
+  { id:'atarci', src:'images/atarci-morocco-22.5x16.jpg', title:'Atarci', origin:'Morocco', region:'north-africa', price:83, size:'22.5 × 16 in', medium:'Charcoal on Canvas' },
+  { id:'zinat', src:'images/zinat-morocco-14x25.jpg', title:'Zinat', origin:'Morocco', region:'north-africa', price:82, size:'14 × 25 in', medium:'Oil on Canvas' },
+  { id:'hamid-kadiri', src:'images/hamid-kadiri-morocco-11.8x15.8.jpg', title:'Hamid Kadiri', origin:'Morocco', region:'north-africa', price:78, size:'11.8 × 15.8 in', medium:'Oil on Canvas' },
+  { id:'hamid-kadiri-2', src:'images/hamid-kadiri-morocco-10.5x8.jpg', title:'Hamid Kadiri II', origin:'Morocco', region:'north-africa', price:75, size:'10.5 × 8 in', medium:'Oil on Canvas' },
+  { id:'hassan-wakif', src:'images/hassan-wakif-morocco-25.5x9.5.jpg', title:'Hassan Wakif', origin:'Morocco', region:'north-africa', price:79, size:'25.5 × 9.5 in', medium:'Oil on Canvas' },
+  { id:'hassan-wakif-2', src:'images/hassan-wakif-morocco-25.5x9.5-2.jpg', title:'Hassan Wakif II', origin:'Morocco', region:'north-africa', price:79, size:'25.5 × 9.5 in', medium:'Oil on Canvas' },
   // West Africa — Nigeria
-  { id:'g-joe', src:'images/g-joe-nigeria-17x19.jpg', title:'G. Joe', origin:'Nigeria', region:'west-africa', price:149, size:'17 × 19 in', medium:'Oil on Velvet' },
-  { id:'g-joe-2', src:'images/g-joe-nigeria-17x19-2.jpg', title:'G. Joe II', origin:'Nigeria', region:'west-africa', price:149, size:'17 × 19 in', medium:'Oil on Velvet' },
-  { id:'g-joe-3', src:'images/g-joe-nigeria-19.5x17.5.jpg', title:'G. Joe III', origin:'Nigeria', region:'west-africa', price:139, size:'19.5 × 17.5 in', medium:'Oil on Velvet' },
-  { id:'nigerian-artist', src:'images/nigerian-artist-16x12.jpg', title:'Nigerian Artist', origin:'Nigeria', region:'west-africa', price:129, size:'16 × 12 in', medium:'Horn on Velvet' },
-  { id:'nigerian-artist-2', src:'images/nigerian-artist-16x12-2.jpg', title:'Nigerian Artist II', origin:'Nigeria', region:'west-africa', price:129, size:'16 × 12 in', medium:'Horn on Velvet' },
+  { id:'g-joe', src:'images/g-joe-nigeria-17x19.jpg', title:'G. Joe', origin:'Nigeria', region:'west-africa', price:82, size:'17 × 19 in', medium:'Oil on Velvet' },
+  { id:'g-joe-2', src:'images/g-joe-nigeria-17x19-2.jpg', title:'G. Joe II', origin:'Nigeria', region:'west-africa', price:82, size:'17 × 19 in', medium:'Oil on Velvet' },
+  { id:'g-joe-3', src:'images/g-joe-nigeria-19.5x17.5.jpg', title:'G. Joe III', origin:'Nigeria', region:'west-africa', price:82, size:'19.5 × 17.5 in', medium:'Oil on Velvet' },
+  { id:'nigerian-artist', src:'images/nigerian-artist-16x12.jpg', title:'Nigerian Artist', origin:'Nigeria', region:'west-africa', price:78, size:'16 × 12 in', medium:'Horn on Velvet' },
+  { id:'nigerian-artist-2', src:'images/nigerian-artist-16x12-2.jpg', title:'Nigerian Artist II', origin:'Nigeria', region:'west-africa', price:78, size:'16 × 12 in', medium:'Horn on Velvet' },
   // East Africa
-  { id:'east-africa-1', src:'images/east-africa-29x18.jpg', title:'East Africa I', origin:'East Africa', region:'east-africa', price:159, size:'29 × 18 in', medium:'Oil on Canvas' },
-  { id:'east-africa-2', src:'images/east-africa-26x19.jpg', title:'East Africa II', origin:'East Africa', region:'east-africa', price:159, size:'26 × 19 in', medium:'Oil on Canvas' },
-  { id:'east-africa-3', src:'images/east-africa-27x17.jpg', title:'East Africa III', origin:'East Africa', region:'east-africa', price:159, size:'27 × 17 in', medium:'Oil on Canvas' },
-  { id:'east-africa-4', src:'images/east-africa-37x25.jpg', title:'East Africa IV', origin:'East Africa', region:'east-africa', price:179, size:'37 × 25 in', medium:'Oil on Canvas' },
-  { id:'kibuuka', src:'images/kibuuka-uganda-15.25x29.jpg', title:'Kibuuka', origin:'Uganda', region:'east-africa', price:149, size:'15.25 × 29 in', medium:'Oil on Canvas' },
-  { id:'kibuuka-steven', src:'images/kibuuka-steven-uganda-21x47.jpg', title:'Kibuuka Steven', origin:'Uganda', region:'east-africa', price:199, size:'21 × 47 in', medium:'Oil on Canvas' },
+  { id:'east-africa-1', src:'images/east-africa-29x18.jpg', title:'East Africa I', origin:'East Africa', region:'east-africa', price:87, size:'29 × 18 in', medium:'Oil on Canvas' },
+  { id:'east-africa-2', src:'images/east-africa-26x19.jpg', title:'East Africa II', origin:'East Africa', region:'east-africa', price:86, size:'26 × 19 in', medium:'Oil on Canvas' },
+  { id:'east-africa-3', src:'images/east-africa-27x17.jpg', title:'East Africa III', origin:'East Africa', region:'east-africa', price:85, size:'27 × 17 in', medium:'Oil on Canvas' },
+  { id:'east-africa-4', src:'images/east-africa-37x25.jpg', title:'East Africa IV', origin:'East Africa', region:'east-africa', price:98, size:'37 × 25 in', medium:'Oil on Canvas' },
+  { id:'kibuuka', src:'images/kibuuka-uganda-15.25x29.jpg', title:'Kibuuka', origin:'Uganda', region:'east-africa', price:85, size:'15.25 × 29 in', medium:'Oil on Canvas' },
+  { id:'kibuuka-steven', src:'images/kibuuka-steven-uganda-21x47.jpg', title:'Kibuuka Steven', origin:'Uganda', region:'east-africa', price:100, size:'21 × 47 in', medium:'Oil on Canvas' },
   // Southern Africa
-  { id:'mutsiwa', src:'images/mutsiwa-zimbabwe-19.5x27.jpg', title:'C. Mutsiwa', origin:'Zimbabwe', region:'southern-africa', price:179, size:'19.5 × 27 in', medium:'Oil on Canvas' },
-  { id:'malawi-1', src:'images/malawi-artist-13x34.jpg', title:'Malawi Artist', origin:'Malawi', region:'southern-africa', price:129, size:'13 × 34 in', medium:'Oil on Canvas' },
-  { id:'malawi-2', src:'images/malawi-artist-23x31.jpg', title:'Malawi Artist II', origin:'Malawi', region:'southern-africa', price:159, size:'23 × 31 in', medium:'Oil on Canvas' },
-  { id:'malawi-3', src:'images/malawi-artist-32x22.jpg', title:'Malawi Artist III', origin:'Malawi', region:'southern-africa', price:159, size:'32 × 22 in', medium:'Oil on Canvas' }
+  { id:'mutsiwa', src:'images/mutsiwa-zimbabwe-19.5x27.jpg', title:'C. Mutsiwa', origin:'Zimbabwe', region:'southern-africa', price:87, size:'19.5 × 27 in', medium:'Oil on Canvas' },
+  { id:'malawi-1', src:'images/malawi-artist-13x34.jpg', title:'Malawi Artist', origin:'Malawi', region:'southern-africa', price:85, size:'13 × 34 in', medium:'Oil on Canvas' },
+  { id:'malawi-2', src:'images/malawi-artist-23x31.jpg', title:'Malawi Artist II', origin:'Malawi', region:'southern-africa', price:92, size:'23 × 31 in', medium:'Oil on Canvas' },
+  { id:'malawi-3', src:'images/malawi-artist-32x22.jpg', title:'Malawi Artist III', origin:'Malawi', region:'southern-africa', price:92, size:'32 × 22 in', medium:'Oil on Canvas' }
 ];
 
 const grid = document.getElementById('shopGrid');
@@ -199,14 +190,74 @@ document.getElementById('filterRow').addEventListener('click', e => {
   renderProducts(btn.dataset.filter);
 });
 
-// Buy handler — replace with Shopify integration
-function handleBuy(id, title, price) {
-  // SHOPIFY INTEGRATION POINT
-  // Replace this function body with Shopify Buy Button SDK call:
-  // client.checkout.create().then((checkout) => { ... })
+// Shopify Buy Button Integration
+const SHOPIFY_DOMAIN = '7sxcj5-di.myshopify.com';
+const SHOPIFY_TOKEN = '6a68321e8b0de58e7df8870b268858eb';
 
-  alert(`Added "${title}" ($${price}) to cart.\n\nNote: Shopify checkout integration will be connected here.`);
-  console.log('Buy clicked:', { id, title, price });
+const shopifyProducts = {
+  'atarci': '8463596224673',
+  'zinat': '8463596257441',
+  'hamid-kadiri': '8463596290209',
+  'hamid-kadiri-2': '8463596322977',
+  'hassan-wakif': '8463596355745',
+  'hassan-wakif-2': '8463596388513',
+  'g-joe': '8463596421281',
+  'g-joe-2': '8463596454049',
+  'g-joe-3': '8463596486817',
+  'nigerian-artist': '8463596519585',
+  'nigerian-artist-2': '8463596552353',
+  'east-africa-1': '8463596585121',
+  'east-africa-2': '8463596617889',
+  'east-africa-3': '8463596650657',
+  'east-africa-4': '8463596683425',
+  'kibuuka': '8463596716193',
+  'kibuuka-steven': '8463596748961',
+  'mutsiwa': '8463596814497',
+  'malawi-1': '8463596847265',
+  'malawi-2': '8463596880033',
+  'malawi-3': '8463596912801'
+};
+
+let shopifyClient = null;
+
+function initShopify() {
+  if (window.ShopifyBuy && !shopifyClient) {
+    shopifyClient = ShopifyBuy.buildClient({
+      domain: SHOPIFY_DOMAIN,
+      storefrontAccessToken: SHOPIFY_TOKEN,
+    });
+  }
+}
+
+function handleBuy(id, title, price) {
+  if (!shopifyClient) {
+    initShopify();
+    if (!shopifyClient) {
+      window.open('https://' + SHOPIFY_DOMAIN + '/products/' + id, '_blank');
+      return;
+    }
+  }
+
+  const shopifyId = shopifyProducts[id];
+  if (!shopifyId) {
+    window.open('https://' + SHOPIFY_DOMAIN, '_blank');
+    return;
+  }
+
+  const storefrontId = btoa('gid://shopify/Product/' + shopifyId);
+
+  shopifyClient.product.fetch(storefrontId).then(function(product) {
+    const variant = product.variants[0];
+    shopifyClient.checkout.create().then(function(checkout) {
+      const lineItems = [{ variantId: variant.id, quantity: 1 }];
+      shopifyClient.checkout.addLineItems(checkout.id, lineItems).then(function(checkout) {
+        window.location.href = checkout.webUrl;
+      });
+    });
+  }).catch(function(err) {
+    console.error('Shopify error:', err);
+    window.open('https://' + SHOPIFY_DOMAIN + '/products/' + id, '_blank');
+  });
 }
 </script>
 <script src="shared.js"></script>
