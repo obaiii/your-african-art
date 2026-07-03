@@ -88,6 +88,7 @@ const DHL_RATE_PROFILES = {
 const LOCAL_DELIVERY_NGN = 10000;
 const DISPLAY_USD_TO_NGN = 1600;
 const AUTH_CERTIFICATE_USD_PER_PAINTING = 20;
+const AUTH_CERTIFICATE_NGN_PER_PAINTING = 15000;
 const DHL_TUBE_DIAMETER_IN = 2;
 const DHL_TUBE_LENGTH_MARGIN_IN = 2;
 const DHL_TUBE_HANDLING_BUFFER_USD = 20;
@@ -117,11 +118,9 @@ const ARTWORK_SHIPPING_PROFILES = {
   'malawi-2': { widthIn: 23, heightIn: 31, weightLb: 1.6 },
   'malawi-3': { widthIn: 32, heightIn: 22, weightLb: 1.5 }
 };
-const AUTHENTICATION_INSTITUTIONS = {
-  museum: 'Nigerian National Museum, Onikan, Lagos',
-  nike: 'Nike Art Gallery, Lekki, Lagos'
-};
+const AUTHENTICATION_CERTIFICATE_PROVIDER = 'Nigerian National Museum, Onikan, Lagos or Nike Art Gallery, Lekki, Lagos';
 const DISPLAY_CURRENCY_BY_COUNTRY = {
+  NG: { currency: 'NGN', locale: 'en-NG', usdRate: DISPLAY_USD_TO_NGN },
   US: { currency: 'USD', locale: 'en-US', usdRate: 1 },
   GB: { currency: 'GBP', locale: 'en-GB', usdRate: 0.79 },
   CA: { currency: 'CAD', locale: 'en-CA', usdRate: 1.37 },
@@ -137,10 +136,29 @@ const DISPLAY_CURRENCY_BY_COUNTRY = {
   AE: { currency: 'AED', locale: 'en-AE', usdRate: 3.67 },
   OTHER: { currency: 'USD', locale: 'en-US', usdRate: 1 }
 };
+const COUNTRY_BY_TIMEZONE = {
+  'Africa/Lagos': 'NG',
+  'Europe/London': 'GB',
+  'Europe/Paris': 'FR',
+  'Europe/Berlin': 'DE',
+  'Europe/Amsterdam': 'NL',
+  'Europe/Madrid': 'ES',
+  'Europe/Rome': 'IT',
+  'America/New_York': 'US',
+  'America/Chicago': 'US',
+  'America/Denver': 'US',
+  'America/Los_Angeles': 'US',
+  'America/Toronto': 'CA',
+  'America/Vancouver': 'CA',
+  'Africa/Accra': 'GH',
+  'Africa/Johannesburg': 'ZA',
+  'Africa/Nairobi': 'KE',
+  'Africa/Casablanca': 'MA',
+  'Asia/Dubai': 'AE'
+};
 const CART_STORAGE_KEY = 'yourAfricanArtCart';
 let cartItems = loadCart();
 let includeAuthenticationCertificate = false;
-let selectedAuthenticationInstitution = 'museum';
 
 function loadCart() {
   try {
@@ -198,15 +216,8 @@ function ensureCartModal() {
           <input type="checkbox" id="authCertificate">
           <span>
             <strong>Add painting authentication certificate</strong>
-            <small>$20 per painting. Certificate arranged through the Nigerian National Museum, Onikan, Lagos or Nike Art Gallery, Lekki, Lagos.</small>
+            <small>Certificate issued through the Nigerian National Museum, Onikan, Lagos or Nike Art Gallery, Lekki, Lagos. Fee is $20 per painting internationally, or NGN 15,000 per painting for Nigeria checkout.</small>
           </span>
-        </label>
-        <label class="payment-field auth-institution-field" for="authInstitution">
-          <span>Certificate institution</span>
-          <select id="authInstitution">
-            <option value="museum">Nigerian National Museum, Onikan</option>
-            <option value="nike">Nike Art Gallery, Lekki</option>
-          </select>
         </label>
         <div class="payment-totals" id="paymentTotals" aria-live="polite"></div>
         <p class="payment-estimate-note" id="paymentEstimateNote"></p>
@@ -222,6 +233,10 @@ function ensureCartModal() {
   select.innerHTML = COUNTRY_OPTIONS.map(country => (
     `<option value="${country.code}">${country.name}</option>`
   )).join('');
+  const detectedCountryCode = getDetectedCountryCode();
+  if (COUNTRY_OPTIONS.some(country => country.code === detectedCountryCode)) {
+    select.value = detectedCountryCode;
+  }
 
   modal.querySelector('.cart-modal-close').addEventListener('click', closeCart);
   modal.addEventListener('click', e => {
@@ -235,10 +250,6 @@ function ensureCartModal() {
   modal.querySelector('#paymentEmail').addEventListener('input', updatePaymentRoute);
   modal.querySelector('#authCertificate').addEventListener('change', e => {
     includeAuthenticationCertificate = e.target.checked;
-    updatePaymentRoute();
-  });
-  modal.querySelector('#authInstitution').addEventListener('change', e => {
-    selectedAuthenticationInstitution = e.target.value;
     updatePaymentRoute();
   });
   modal.querySelector('#paymentContinueBtn').addEventListener('click', continueToCheckout);
@@ -268,6 +279,36 @@ function formatCurrency(amount, currency, locale) {
   }).format(amount);
 }
 
+function getDetectedCountryCode() {
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  if (COUNTRY_BY_TIMEZONE[timeZone]) return COUNTRY_BY_TIMEZONE[timeZone];
+
+  const languageCountry = (navigator.languages || [navigator.language || ''])
+    .map(language => (language.match(/-([A-Z]{2})\b/i) || [])[1])
+    .find(Boolean);
+  if (languageCountry) {
+    const normalized = languageCountry.toUpperCase();
+    if (DISPLAY_CURRENCY_BY_COUNTRY[normalized]) return normalized;
+  }
+  return 'US';
+}
+
+function getDisplayProfile(countryCode = getDetectedCountryCode()) {
+  return DISPLAY_CURRENCY_BY_COUNTRY[countryCode] || DISPLAY_CURRENCY_BY_COUNTRY.OTHER;
+}
+
+function formatLocalArtworkPrice(usdAmount, countryCode = getDetectedCountryCode()) {
+  const profile = getDisplayProfile(countryCode);
+  const amount = Math.round(Number(usdAmount) * profile.usdRate);
+  return formatCurrency(amount, profile.currency, profile.locale);
+}
+
+function updateLocalizedPriceDisplays() {
+  document.querySelectorAll('[data-usd-price]').forEach(el => {
+    el.textContent = formatLocalArtworkPrice(el.dataset.usdPrice);
+  });
+}
+
 function getCheckoutTotals(route, countryCode) {
   if (!cartItems.length) return null;
   const subtotalUsd = getCartSubtotalUsd();
@@ -276,7 +317,9 @@ function getCheckoutTotals(route, countryCode) {
     : 0;
   if (route === 'local') {
     const artwork = Math.round(subtotalUsd * DISPLAY_USD_TO_NGN);
-    const authentication = Math.round(authenticationUsd * DISPLAY_USD_TO_NGN);
+    const authentication = includeAuthenticationCertificate
+      ? AUTH_CERTIFICATE_NGN_PER_PAINTING * cartItems.length
+      : 0;
     const delivery = LOCAL_DELIVERY_NGN;
     return {
       currency: 'NGN',
@@ -379,7 +422,6 @@ function updatePaymentRoute() {
   const emailField = modal.querySelector('.payment-email-field');
   const emailInput = modal.querySelector('#paymentEmail');
   const customerEmail = emailInput.value.trim();
-  const authInstitutionField = modal.querySelector('.auth-institution-field');
   const note = modal.querySelector('#paymentRouteNote');
   const configNote = modal.querySelector('#paymentConfigNote');
   const continueBtn = modal.querySelector('#paymentContinueBtn');
@@ -388,7 +430,6 @@ function updatePaymentRoute() {
   continueBtn.disabled = !countryCode;
   cityField.classList.toggle('show', countryCode === 'NG');
   emailField.classList.toggle('show', countryCode === 'NG');
-  authInstitutionField.classList.toggle('show', includeAuthenticationCertificate);
 
   if (!countryCode) {
     note.textContent = 'Choose your delivery country to continue.';
@@ -525,7 +566,7 @@ function renderCart() {
         <span>Original artwork</span>
       </div>
       <div class="cart-item-actions">
-        <b>${formatUsd(item.price)}</b>
+        <b data-usd-price="${item.price}">${formatLocalArtworkPrice(item.price)}</b>
         <button type="button" onclick="removeFromCart('${item.id}')" aria-label="Remove ${item.title}">Remove</button>
       </div>
     </div>
@@ -577,8 +618,7 @@ function submitPayPalCart(countryCode) {
 
   if (includeAuthenticationCertificate) {
     const certificateIndex = shippingIndex + 1;
-    const institutionName = AUTHENTICATION_INSTITUTIONS[selectedAuthenticationInstitution] || AUTHENTICATION_INSTITUTIONS.museum;
-    addHiddenField(form, 'item_name_' + certificateIndex, 'Painting authentication certificate - ' + institutionName);
+    addHiddenField(form, 'item_name_' + certificateIndex, 'Painting authentication certificate');
     addHiddenField(form, 'item_number_' + certificateIndex, 'authentication-certificate');
     addHiddenField(form, 'amount_' + certificateIndex, AUTH_CERTIFICATE_USD_PER_PAINTING.toFixed(2));
     addHiddenField(form, 'quantity_' + certificateIndex, String(cartItems.length));
@@ -625,7 +665,7 @@ function submitPaystackCart() {
               display_name: 'Authentication certificate',
               variable_name: 'authentication_certificate',
               value: includeAuthenticationCertificate
-                ? AUTHENTICATION_INSTITUTIONS[selectedAuthenticationInstitution]
+                ? AUTHENTICATION_CERTIFICATE_PROVIDER
                 : 'Not requested'
             }
           ]
@@ -679,3 +719,8 @@ function addHiddenField(form, name, value) {
 
 ensureCartButton();
 renderCart();
+updateLocalizedPriceDisplays();
+window.formatLocalArtworkPrice = formatLocalArtworkPrice;
+window.updateLocalizedPriceDisplays = updateLocalizedPriceDisplays;
+window.getDetectedCountryCode = getDetectedCountryCode;
+document.dispatchEvent(new CustomEvent('yaa:currency-ready'));

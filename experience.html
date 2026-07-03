@@ -203,6 +203,10 @@ const paintingCountry = document.getElementById('paintingCountry');
 const counterEl = document.getElementById('counter');
 const roomBuyBtn = document.getElementById('roomBuyBtn');
 
+function formatExperiencePrice(price) {
+  return window.formatLocalArtworkPrice ? window.formatLocalArtworkPrice(price) : `$${price}`;
+}
+
 function fitPaintingToFrame(img, frame, painting) {
   // Get the room photo's displayed dimensions
   const roomRect = roomPhoto.getBoundingClientRect();
@@ -318,7 +322,8 @@ function updateRoom(animate) {
   paintingName.textContent = p.title;
   paintingCountry.textContent = `${p.origin} · ${p.realW} × ${p.realH} in · ${p.medium}`;
   counterEl.textContent = `${currentIdx + 1} / ${room.paintings.length}`;
-  roomBuyBtn.innerHTML = `Add &mdash; $${p.price}`;
+  roomBuyBtn.dataset.usdPrice = String(p.price);
+  roomBuyBtn.innerHTML = `Add &mdash; ${formatExperiencePrice(p.price)}`;
   roomBuyBtn.onclick = () => {
     handleBuy(p.handle, p.title, p.price);
   };
@@ -333,6 +338,7 @@ window.addEventListener('resize', () => {
 });
 
 updateRoom(false);
+document.addEventListener('yaa:currency-ready', () => updateRoom(false));
 
 // Tabs
 document.getElementById('countryTabs').addEventListener('click', e => {

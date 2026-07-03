@@ -158,12 +158,13 @@ function renderProducts(filter) {
         <p class="shop-card-origin">${p.origin} &middot; ${p.size}</p>
         <p class="shop-card-medium">${p.medium}</p>
         <div class="shop-card-row">
-          <span class="shop-card-price">$${p.price}</span>
+          <span class="shop-card-price" data-usd-price="${p.price}">$${p.price}</span>
           <button class="buy-btn" onclick="handleBuy('${p.id}','${p.title}',${p.price})">Add to Cart</button>
         </div>
       </div>
     </div>
   `).join('');
+  if (window.updateLocalizedPriceDisplays) window.updateLocalizedPriceDisplays();
 }
 
 // Initial render
