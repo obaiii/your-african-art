@@ -46,26 +46,41 @@ const PAYPAL_BUSINESS = 'SG2LRK7JZVVUS';
 
 const COUNTRY_OPTIONS = [
   { code: '', name: 'Select delivery country' },
-  { code: 'NG', name: 'Nigeria' },
-  { code: 'GB', name: 'United Kingdom' },
-  { code: 'US', name: 'United States' },
   { code: 'CA', name: 'Canada' },
-  { code: 'GH', name: 'Ghana' },
-  { code: 'ZA', name: 'South Africa' },
-  { code: 'KE', name: 'Kenya' },
-  { code: 'MA', name: 'Morocco' },
   { code: 'FR', name: 'France' },
   { code: 'DE', name: 'Germany' },
-  { code: 'NL', name: 'Netherlands' },
-  { code: 'ES', name: 'Spain' },
+  { code: 'GH', name: 'Ghana' },
   { code: 'IT', name: 'Italy' },
+  { code: 'KE', name: 'Kenya' },
+  { code: 'MA', name: 'Morocco' },
+  { code: 'NL', name: 'Netherlands' },
+  { code: 'NG', name: 'Nigeria' },
+  { code: 'OTHER', name: 'Other country' },
+  { code: 'ZA', name: 'South Africa' },
+  { code: 'ES', name: 'Spain' },
   { code: 'AE', name: 'United Arab Emirates' },
-  { code: 'OTHER', name: 'Other country' }
+  { code: 'GB', name: 'United Kingdom' },
+  { code: 'US', name: 'United States' }
 ];
 
 const LOCAL_CHECKOUT_COUNTRIES = ['NG'];
 const LOCAL_DELIVERY_CITIES = ['LAGOS', 'ABUJA'];
-const INTERNATIONAL_SHIPPING_USD = 30;
+const INTERNATIONAL_SHIPPING_USD_BY_COUNTRY = {
+  CA: 175,
+  FR: 155,
+  DE: 155,
+  GH: 115,
+  IT: 155,
+  KE: 130,
+  MA: 135,
+  NL: 155,
+  OTHER: 175,
+  ZA: 125,
+  ES: 155,
+  AE: 145,
+  GB: 155,
+  US: 175
+};
 const LOCAL_DELIVERY_NGN = 10000;
 const DISPLAY_USD_TO_NGN = 1600;
 const DISPLAY_CURRENCY_BY_COUNTRY = {
@@ -180,6 +195,7 @@ function formatCurrency(amount, currency, locale) {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
+    currencyDisplay: 'code',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0
   }).format(amount);
@@ -199,8 +215,9 @@ function getCheckoutTotals(route, countryCode) {
     };
   }
   const profile = DISPLAY_CURRENCY_BY_COUNTRY[countryCode] || DISPLAY_CURRENCY_BY_COUNTRY.OTHER;
+  const shippingUsd = getInternationalShippingUsd(countryCode);
   const artwork = Math.round(subtotalUsd * profile.usdRate);
-  const delivery = Math.round(INTERNATIONAL_SHIPPING_USD * profile.usdRate);
+  const delivery = Math.round(shippingUsd * profile.usdRate);
   return {
     currency: profile.currency,
     locale: profile.locale,
@@ -209,9 +226,13 @@ function getCheckoutTotals(route, countryCode) {
     total: artwork + delivery,
     paypalCurrency: 'USD',
     paypalArtwork: subtotalUsd,
-    paypalDelivery: INTERNATIONAL_SHIPPING_USD,
-    paypalTotal: subtotalUsd + INTERNATIONAL_SHIPPING_USD
+    paypalDelivery: shippingUsd,
+    paypalTotal: subtotalUsd + shippingUsd
   };
+}
+
+function getInternationalShippingUsd(countryCode) {
+  return INTERNATIONAL_SHIPPING_USD_BY_COUNTRY[countryCode] || INTERNATIONAL_SHIPPING_USD_BY_COUNTRY.OTHER;
 }
 
 function renderPaymentTotals(route, countryCode) {
@@ -283,7 +304,7 @@ function updatePaymentRoute() {
   } else {
     citySelect.value = '';
     continueBtn.textContent = 'Checkout with PayPal';
-    note.textContent = 'You will continue through PayPal secure checkout. International delivery is included in the total shown.';
+    note.textContent = 'You will continue through PayPal secure checkout. International DHL/FedEx delivery is included in the total shown.';
     if (!PAYPAL_BUSINESS) {
       continueBtn.disabled = true;
       configNote.textContent = 'PayPal merchant ID is needed before live checkout can be enabled.';
@@ -307,7 +328,7 @@ function continueToPayPal() {
   const route = getPaymentRoute(countryCode);
   if (route !== 'paypal') return;
 
-  submitPayPalCart();
+  submitPayPalCart(countryCode);
 }
 
 function handleBuy(id, title, price) {
@@ -374,7 +395,7 @@ function openCart() {
   document.body.style.overflow = 'hidden';
 }
 
-function submitPayPalCart() {
+function submitPayPalCart(countryCode) {
   const form = document.createElement('form');
   form.method = 'post';
   form.action = 'https://www.paypal.com/cgi-bin/webscr';
@@ -404,7 +425,7 @@ function submitPayPalCart() {
   const shippingIndex = cartItems.length + 1;
   addHiddenField(form, 'item_name_' + shippingIndex, 'International delivery');
   addHiddenField(form, 'item_number_' + shippingIndex, 'shipping-international');
-  addHiddenField(form, 'amount_' + shippingIndex, INTERNATIONAL_SHIPPING_USD.toFixed(2));
+  addHiddenField(form, 'amount_' + shippingIndex, getInternationalShippingUsd(countryCode).toFixed(2));
   addHiddenField(form, 'quantity_' + shippingIndex, '1');
 
   document.body.appendChild(form);
