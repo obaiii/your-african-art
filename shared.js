@@ -43,6 +43,10 @@ function handleEmail(e) {
 
 // ===== CART & PAYMENT ROUTING =====
 const PAYPAL_BUSINESS = 'SG2LRK7JZVVUS';
+const PAYSTACK_PUBLIC_KEY = 'pk_test_dc620a3776b7ebcc93da3a4693d9c87ebe77f8fa';
+const PAYSTACK_IS_LIVE = PAYSTACK_PUBLIC_KEY.startsWith('pk_live_');
+const PAYSTACK_ALLOW_TEST_CHECKOUT = !PAYSTACK_IS_LIVE && ['localhost', '127.0.0.1', ''].includes(window.location.hostname);
+const PAYSTACK_SCRIPT_SRC = 'https://js.paystack.co/v2/inline.js';
 
 const COUNTRY_OPTIONS = [
   { code: '', name: 'Select delivery country' },
@@ -186,6 +190,10 @@ function ensureCartModal() {
             <option value="OTHER">Other city</option>
           </select>
         </label>
+        <label class="payment-field payment-email-field" for="paymentEmail">
+          <span>Email for checkout receipt</span>
+          <input id="paymentEmail" type="email" autocomplete="email" placeholder="you@example.com">
+        </label>
         <label class="cart-addon" for="authCertificate">
           <input type="checkbox" id="authCertificate">
           <span>
@@ -224,6 +232,7 @@ function ensureCartModal() {
   });
   select.addEventListener('change', updatePaymentRoute);
   modal.querySelector('#paymentCity').addEventListener('change', updatePaymentRoute);
+  modal.querySelector('#paymentEmail').addEventListener('input', updatePaymentRoute);
   modal.querySelector('#authCertificate').addEventListener('change', e => {
     includeAuthenticationCertificate = e.target.checked;
     updatePaymentRoute();
@@ -232,7 +241,7 @@ function ensureCartModal() {
     selectedAuthenticationInstitution = e.target.value;
     updatePaymentRoute();
   });
-  modal.querySelector('#paymentContinueBtn').addEventListener('click', continueToPayPal);
+  modal.querySelector('#paymentContinueBtn').addEventListener('click', continueToCheckout);
 
   return modal;
 }
@@ -367,6 +376,9 @@ function updatePaymentRoute() {
   const cityField = modal.querySelector('.payment-city-field');
   const citySelect = modal.querySelector('#paymentCity');
   const cityCode = citySelect.value;
+  const emailField = modal.querySelector('.payment-email-field');
+  const emailInput = modal.querySelector('#paymentEmail');
+  const customerEmail = emailInput.value.trim();
   const authInstitutionField = modal.querySelector('.auth-institution-field');
   const note = modal.querySelector('#paymentRouteNote');
   const configNote = modal.querySelector('#paymentConfigNote');
@@ -375,6 +387,7 @@ function updatePaymentRoute() {
   configNote.textContent = '';
   continueBtn.disabled = !countryCode;
   cityField.classList.toggle('show', countryCode === 'NG');
+  emailField.classList.toggle('show', countryCode === 'NG');
   authInstitutionField.classList.toggle('show', includeAuthenticationCertificate);
 
   if (!countryCode) {
@@ -401,12 +414,33 @@ function updatePaymentRoute() {
       configNote.textContent = 'Email hello@yourafricanart.com or use WhatsApp to confirm availability and delivery cost.';
       return;
     }
-    continueBtn.disabled = true;
-    continueBtn.textContent = 'Paystack checkout coming soon';
-    note.textContent = 'A secure local checkout option is available. Local delivery for this city is included in the total shown.';
-    configNote.textContent = 'Paystack checkout will be enabled next for local orders.';
+    continueBtn.textContent = PAYSTACK_IS_LIVE
+      ? 'Checkout with Paystack'
+      : PAYSTACK_ALLOW_TEST_CHECKOUT
+        ? 'Test Paystack checkout'
+        : 'Paystack awaiting review';
+    note.textContent = 'You will continue through Paystack secure checkout in NGN. Local delivery for this city is included in the total shown.';
+    if (!isValidEmail(customerEmail)) {
+      continueBtn.disabled = true;
+      configNote.textContent = 'Enter an email address so Paystack can issue the payment receipt.';
+      return;
+    }
+    if (!PAYSTACK_PUBLIC_KEY) {
+      continueBtn.disabled = true;
+      configNote.textContent = 'Paystack public key is needed before local checkout can be enabled.';
+      return;
+    }
+    if (!PAYSTACK_IS_LIVE) {
+      configNote.textContent = PAYSTACK_ALLOW_TEST_CHECKOUT
+        ? 'Paystack is currently connected with the test public key. Replace it with the live public key before accepting real payments.'
+        : 'Paystack has been activated and is awaiting review. Local checkout will open when the live public key is available.';
+      continueBtn.disabled = !PAYSTACK_ALLOW_TEST_CHECKOUT;
+      return;
+    }
+    continueBtn.disabled = false;
   } else {
     citySelect.value = '';
+    emailInput.value = '';
     continueBtn.textContent = 'Checkout with PayPal';
     note.textContent = 'You will continue through PayPal secure checkout. DHL tube delivery is included in the total shown.';
     if (!PAYPAL_BUSINESS) {
@@ -423,16 +457,24 @@ function closeCart() {
   document.body.style.overflow = '';
 }
 
-function continueToPayPal() {
-  if (!cartItems.length || !PAYPAL_BUSINESS) return;
+function continueToCheckout() {
+  if (!cartItems.length) return;
   const modal = ensureCartModal();
   const countryCode = modal.querySelector('#paymentCountry').value;
   if (!countryCode) return;
 
   const route = getPaymentRoute(countryCode);
-  if (route !== 'paypal') return;
+  if (route === 'local') {
+    submitPaystackCart();
+    return;
+  }
 
+  if (!PAYPAL_BUSINESS) return;
   submitPayPalCart(countryCode);
+}
+
+function isValidEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
 function handleBuy(id, title, price) {
@@ -544,6 +586,87 @@ function submitPayPalCart(countryCode) {
 
   document.body.appendChild(form);
   form.submit();
+}
+
+function submitPaystackCart() {
+  const modal = ensureCartModal();
+  const email = modal.querySelector('#paymentEmail').value.trim();
+  const countryCode = modal.querySelector('#paymentCountry').value;
+  const cityCode = modal.querySelector('#paymentCity').value;
+  const totals = getCheckoutTotals('local', countryCode);
+
+  if (!totals || !PAYSTACK_PUBLIC_KEY || !isValidEmail(email) || !LOCAL_DELIVERY_CITIES.includes(cityCode)) {
+    updatePaymentRoute();
+    return;
+  }
+
+  loadPaystackInline()
+    .then(() => {
+      const popup = new PaystackPop();
+      popup.newTransaction({
+        key: PAYSTACK_PUBLIC_KEY,
+        email,
+        amount: totals.total * 100,
+        currency: 'NGN',
+        reference: 'yaa-ng-' + Date.now(),
+        metadata: {
+          custom_fields: [
+            {
+              display_name: 'Artwork',
+              variable_name: 'artwork',
+              value: cartItems.map(item => item.title).join(', ')
+            },
+            {
+              display_name: 'Delivery city',
+              variable_name: 'delivery_city',
+              value: cityCode === 'LAGOS' ? 'Lagos' : 'Abuja'
+            },
+            {
+              display_name: 'Authentication certificate',
+              variable_name: 'authentication_certificate',
+              value: includeAuthenticationCertificate
+                ? AUTHENTICATION_INSTITUTIONS[selectedAuthenticationInstitution]
+                : 'Not requested'
+            }
+          ]
+        },
+        onSuccess: transaction => {
+          cartItems = [];
+          saveCart();
+          renderCart();
+          modal.querySelector('#paymentConfigNote').textContent = 'Payment received. Reference: ' + transaction.reference + '. We will confirm and arrange dispatch.';
+        },
+        onCancel: () => {
+          modal.querySelector('#paymentConfigNote').textContent = 'Paystack checkout was closed before payment was completed.';
+        },
+        onError: error => {
+          modal.querySelector('#paymentConfigNote').textContent = 'Paystack could not load checkout: ' + error.message;
+        }
+      });
+    })
+    .catch(() => {
+      modal.querySelector('#paymentConfigNote').textContent = 'Paystack checkout could not be loaded. Please check your connection and try again.';
+    });
+}
+
+function loadPaystackInline() {
+  if (window.PaystackPop) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const existingScript = document.querySelector('script[data-paystack-inline]');
+    if (existingScript) {
+      existingScript.addEventListener('load', resolve, { once: true });
+      existingScript.addEventListener('error', reject, { once: true });
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = PAYSTACK_SCRIPT_SRC;
+    script.async = true;
+    script.dataset.paystackInline = 'true';
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
 }
 
 function addHiddenField(form, name, value) {
