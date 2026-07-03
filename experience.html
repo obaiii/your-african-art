@@ -84,7 +84,7 @@
     <!-- Info bar below room -->
     <div class="room-info-bar">
       <div class="room-buy-row">
-        <button class="room-buy-btn" id="roomBuyBtn">Buy &mdash; $82</button>
+        <button class="room-buy-btn" id="roomBuyBtn">Add &mdash; $82</button>
       </div>
       <div class="painting-info-row">
         <div>
@@ -318,7 +318,7 @@ function updateRoom(animate) {
   paintingName.textContent = p.title;
   paintingCountry.textContent = `${p.origin} · ${p.realW} × ${p.realH} in · ${p.medium}`;
   counterEl.textContent = `${currentIdx + 1} / ${room.paintings.length}`;
-  roomBuyBtn.innerHTML = `Buy &mdash; $${p.price}`;
+  roomBuyBtn.innerHTML = `Add &mdash; $${p.price}`;
   roomBuyBtn.onclick = () => {
     handleBuy(p.handle, p.title, p.price);
   };

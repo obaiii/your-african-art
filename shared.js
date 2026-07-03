@@ -41,17 +41,8 @@ function handleEmail(e) {
   if (success) success.classList.add('show');
 }
 
-// ===== PAYMENT ROUTING =====
-const PAYMENT_LINKS = {
-  // Create payment links for totals that include shipping.
-  // Suggested keys: 'atarci:international', 'atarci:lagos', 'atarci:abuja'.
-  paypal: {
-    default: ''
-  },
-  local: {
-    default: ''
-  }
-};
+// ===== CART & PAYMENT ROUTING =====
+const PAYPAL_BUSINESS = 'SG2LRK7JZVVUS';
 
 const COUNTRY_OPTIONS = [
   { code: '', name: 'Select delivery country' },
@@ -93,45 +84,63 @@ const DISPLAY_CURRENCY_BY_COUNTRY = {
   AE: { currency: 'AED', locale: 'en-AE', usdRate: 3.67 },
   OTHER: { currency: 'USD', locale: 'en-US', usdRate: 1 }
 };
-let selectedPainting = null;
+const CART_STORAGE_KEY = 'yourAfricanArtCart';
+let cartItems = loadCart();
 
-function ensurePaymentModal() {
-  let modal = document.getElementById('paymentModal');
+function loadCart() {
+  try {
+    return JSON.parse(localStorage.getItem(CART_STORAGE_KEY)) || [];
+  } catch (err) {
+    return [];
+  }
+}
+
+function saveCart() {
+  localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+}
+
+function getCartSubtotalUsd() {
+  return cartItems.reduce((sum, item) => sum + item.price, 0);
+}
+
+function getCartCount() {
+  return cartItems.length;
+}
+
+function ensureCartModal() {
+  let modal = document.getElementById('cartModal');
   if (modal) return modal;
 
   modal = document.createElement('div');
-  modal.id = 'paymentModal';
-  modal.className = 'payment-modal';
+  modal.id = 'cartModal';
+  modal.className = 'cart-modal';
   modal.innerHTML = `
-    <div class="payment-modal-panel" role="dialog" aria-modal="true" aria-labelledby="paymentModalTitle">
-      <button class="payment-modal-close" type="button" aria-label="Close checkout">&times;</button>
+    <div class="cart-modal-panel" role="dialog" aria-modal="true" aria-labelledby="cartModalTitle">
+      <button class="cart-modal-close" type="button" aria-label="Close cart">&times;</button>
       <span class="section-tag">Secure Checkout</span>
-      <h2 id="paymentModalTitle">Complete your purchase</h2>
-      <div class="payment-summary">
-        <div>
-          <strong id="paymentArtworkTitle"></strong>
-          <span id="paymentArtworkMeta"></span>
-        </div>
-        <b id="paymentArtworkPrice"></b>
+      <h2 id="cartModalTitle">Your Cart</h2>
+      <div class="cart-items" id="cartItems"></div>
+      <div class="cart-empty" id="cartEmpty">Your cart is empty.</div>
+      <div class="cart-checkout" id="cartCheckout">
+        <label class="payment-field" for="paymentCountry">
+          <span>Delivery country</span>
+          <select id="paymentCountry"></select>
+        </label>
+        <label class="payment-field payment-city-field" for="paymentCity">
+          <span>Delivery city</span>
+          <select id="paymentCity">
+            <option value="">Select delivery city</option>
+            <option value="LAGOS">Lagos</option>
+            <option value="ABUJA">Abuja</option>
+            <option value="OTHER">Other city</option>
+          </select>
+        </label>
+        <div class="payment-totals" id="paymentTotals" aria-live="polite"></div>
+        <p class="payment-estimate-note" id="paymentEstimateNote"></p>
+        <p class="payment-route-note" id="paymentRouteNote">Choose your delivery country to continue.</p>
+        <button class="payment-continue-btn" id="paymentContinueBtn" type="button" disabled>Checkout with PayPal</button>
+        <p class="payment-config-note" id="paymentConfigNote"></p>
       </div>
-      <label class="payment-field" for="paymentCountry">
-        <span>Delivery country</span>
-        <select id="paymentCountry"></select>
-      </label>
-      <label class="payment-field payment-city-field" for="paymentCity">
-        <span>Delivery city</span>
-        <select id="paymentCity">
-          <option value="">Select delivery city</option>
-          <option value="LAGOS">Lagos</option>
-          <option value="ABUJA">Abuja</option>
-          <option value="OTHER">Other city</option>
-        </select>
-      </label>
-      <div class="payment-totals" id="paymentTotals" aria-live="polite"></div>
-      <p class="payment-estimate-note" id="paymentEstimateNote"></p>
-      <p class="payment-route-note" id="paymentRouteNote">Choose your delivery country to continue.</p>
-      <button class="payment-continue-btn" id="paymentContinueBtn" type="button" disabled>Continue to secure checkout</button>
-      <p class="payment-config-note" id="paymentConfigNote"></p>
     </div>
   `;
   document.body.appendChild(modal);
@@ -141,33 +150,22 @@ function ensurePaymentModal() {
     `<option value="${country.code}">${country.name}</option>`
   )).join('');
 
-  modal.querySelector('.payment-modal-close').addEventListener('click', closePaymentModal);
+  modal.querySelector('.cart-modal-close').addEventListener('click', closeCart);
   modal.addEventListener('click', e => {
-    if (e.target === modal) closePaymentModal();
+    if (e.target === modal) closeCart();
   });
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && modal.classList.contains('active')) closePaymentModal();
+    if (e.key === 'Escape' && modal.classList.contains('active')) closeCart();
   });
   select.addEventListener('change', updatePaymentRoute);
   modal.querySelector('#paymentCity').addEventListener('change', updatePaymentRoute);
-  modal.querySelector('#paymentContinueBtn').addEventListener('click', continueToPayment);
+  modal.querySelector('#paymentContinueBtn').addEventListener('click', continueToPayPal);
 
   return modal;
 }
 
 function getPaymentRoute(countryCode) {
   return LOCAL_CHECKOUT_COUNTRIES.includes(countryCode) ? 'local' : 'paypal';
-}
-
-function getPaymentKey(route, paintingId, cityCode) {
-  if (route === 'local' && cityCode) return paintingId + ':' + cityCode.toLowerCase();
-  return paintingId + ':international';
-}
-
-function getPaymentLink(route, paintingId, cityCode) {
-  const links = PAYMENT_LINKS[route] || {};
-  const key = getPaymentKey(route, paintingId, cityCode);
-  return links[key] || links[paintingId] || links.default || '';
 }
 
 function formatUsd(amount) {
@@ -188,9 +186,10 @@ function formatCurrency(amount, currency, locale) {
 }
 
 function getCheckoutTotals(route, countryCode) {
-  if (!selectedPainting) return null;
+  if (!cartItems.length) return null;
+  const subtotalUsd = getCartSubtotalUsd();
   if (route === 'local') {
-    const artwork = Math.round(selectedPainting.price * DISPLAY_USD_TO_NGN);
+    const artwork = Math.round(subtotalUsd * DISPLAY_USD_TO_NGN);
     const delivery = LOCAL_DELIVERY_NGN;
     return {
       currency: 'NGN',
@@ -200,19 +199,23 @@ function getCheckoutTotals(route, countryCode) {
     };
   }
   const profile = DISPLAY_CURRENCY_BY_COUNTRY[countryCode] || DISPLAY_CURRENCY_BY_COUNTRY.OTHER;
-  const artwork = Math.round(selectedPainting.price * profile.usdRate);
+  const artwork = Math.round(subtotalUsd * profile.usdRate);
   const delivery = Math.round(INTERNATIONAL_SHIPPING_USD * profile.usdRate);
   return {
     currency: profile.currency,
     locale: profile.locale,
     artwork,
     delivery,
-    total: artwork + delivery
+    total: artwork + delivery,
+    paypalCurrency: 'USD',
+    paypalArtwork: subtotalUsd,
+    paypalDelivery: INTERNATIONAL_SHIPPING_USD,
+    paypalTotal: subtotalUsd + INTERNATIONAL_SHIPPING_USD
   };
 }
 
 function renderPaymentTotals(route, countryCode) {
-  const modal = ensurePaymentModal();
+  const modal = ensureCartModal();
   const totals = getCheckoutTotals(route, countryCode);
   const totalsEl = modal.querySelector('#paymentTotals');
   const estimateNote = modal.querySelector('#paymentEstimateNote');
@@ -230,14 +233,13 @@ function renderPaymentTotals(route, countryCode) {
     <div><span>Delivery</span><strong>${formatter(totals.delivery)}</strong></div>
     <div class="payment-total-row"><span>Total</span><strong>${formatter(totals.total)}</strong></div>
   `;
-  modal.querySelector('#paymentArtworkPrice').textContent = formatter(totals.artwork);
   estimateNote.textContent = route === 'local'
     ? 'Local checkout total shown in NGN.'
-    : 'Estimated local currency total. PayPal will show the final conversion before you pay.';
+    : 'Estimated local currency total. PayPal checkout is charged in USD and will show the final conversion before you pay.';
 }
 
 function updatePaymentRoute() {
-  const modal = ensurePaymentModal();
+  const modal = ensureCartModal();
   const countryCode = modal.querySelector('#paymentCountry').value;
   const cityField = modal.querySelector('.payment-city-field');
   const citySelect = modal.querySelector('#paymentCity');
@@ -254,7 +256,6 @@ function updatePaymentRoute() {
     note.textContent = 'Choose your delivery country to continue.';
     modal.querySelector('#paymentTotals').innerHTML = '';
     modal.querySelector('#paymentEstimateNote').textContent = '';
-    modal.querySelector('#paymentArtworkPrice').textContent = formatUsd(selectedPainting.price);
     return;
   }
 
@@ -264,57 +265,159 @@ function updatePaymentRoute() {
   if (route === 'local') {
     if (!cityCode) {
       continueBtn.disabled = true;
-      note.textContent = 'Choose your delivery city to see the final checkout total.';
+      continueBtn.textContent = 'Paystack checkout';
+      note.textContent = 'Choose your delivery city to see the local checkout total.';
       return;
     }
     if (!LOCAL_DELIVERY_CITIES.includes(cityCode)) {
       continueBtn.disabled = true;
+      continueBtn.textContent = 'Request delivery quote';
       note.textContent = 'For this delivery city, please contact us for a delivery quote before payment.';
       configNote.textContent = 'Email hello@yourafricanart.com or use WhatsApp to confirm availability and delivery cost.';
       return;
     }
+    continueBtn.disabled = true;
+    continueBtn.textContent = 'Paystack checkout coming soon';
     note.textContent = 'A secure local checkout option is available. Delivery is included for this city.';
+    configNote.textContent = 'Paystack checkout will be enabled next for local orders.';
   } else {
     citySelect.value = '';
+    continueBtn.textContent = 'Checkout with PayPal';
     note.textContent = 'You will continue through PayPal secure checkout. International delivery is included in the total shown.';
-  }
-
-  if (!getPaymentLink(route, selectedPainting.id, cityCode)) {
-    continueBtn.disabled = true;
-    configNote.textContent = 'Checkout links are being configured. Please email hello@yourafricanart.com to reserve this piece.';
+    if (!PAYPAL_BUSINESS) {
+      continueBtn.disabled = true;
+      configNote.textContent = 'PayPal merchant ID is needed before live checkout can be enabled.';
+    }
   }
 }
 
-function closePaymentModal() {
-  const modal = document.getElementById('paymentModal');
+function closeCart() {
+  const modal = document.getElementById('cartModal');
   if (!modal) return;
   modal.classList.remove('active');
   document.body.style.overflow = '';
 }
 
-function continueToPayment() {
-  if (!selectedPainting) return;
-  const modal = ensurePaymentModal();
+function continueToPayPal() {
+  if (!cartItems.length || !PAYPAL_BUSINESS) return;
+  const modal = ensureCartModal();
   const countryCode = modal.querySelector('#paymentCountry').value;
-  const cityCode = modal.querySelector('#paymentCity').value;
   if (!countryCode) return;
 
   const route = getPaymentRoute(countryCode);
-  const link = getPaymentLink(route, selectedPainting.id, cityCode);
-  if (link) {
-    window.location.href = link;
-  }
+  if (route !== 'paypal') return;
+
+  submitPayPalCart();
 }
 
 function handleBuy(id, title, price) {
-  selectedPainting = { id, title, price };
-  const modal = ensurePaymentModal();
-  modal.querySelector('#paymentArtworkTitle').textContent = title;
-  modal.querySelector('#paymentArtworkMeta').textContent = 'Original artwork';
-  modal.querySelector('#paymentArtworkPrice').textContent = '$' + price;
-  modal.querySelector('#paymentCountry').value = '';
-  modal.querySelector('#paymentCity').value = '';
+  addToCart({ id, title, price });
+}
+
+function addToCart(item) {
+  if (!cartItems.some(cartItem => cartItem.id === item.id)) {
+    cartItems.push({ id: item.id, title: item.title, price: Number(item.price) });
+    saveCart();
+  }
+  openCart();
+}
+
+function removeFromCart(id) {
+  cartItems = cartItems.filter(item => item.id !== id);
+  saveCart();
+  renderCart();
+}
+
+function ensureCartButton() {
+  if (document.getElementById('floatingCartButton')) return;
+  const button = document.createElement('button');
+  button.id = 'floatingCartButton';
+  button.className = 'floating-cart-button';
+  button.type = 'button';
+  button.innerHTML = `Cart <span id="floatingCartCount">0</span>`;
+  button.addEventListener('click', openCart);
+  document.body.appendChild(button);
+}
+
+function renderCart() {
+  const modal = ensureCartModal();
+  const itemsEl = modal.querySelector('#cartItems');
+  const emptyEl = modal.querySelector('#cartEmpty');
+  const checkoutEl = modal.querySelector('#cartCheckout');
+  const countEl = document.getElementById('floatingCartCount');
+  const count = getCartCount();
+
+  if (countEl) countEl.textContent = String(count);
+  emptyEl.style.display = count ? 'none' : 'block';
+  checkoutEl.style.display = count ? 'block' : 'none';
+
+  itemsEl.innerHTML = cartItems.map(item => `
+    <div class="cart-item">
+      <div>
+        <strong>${item.title}</strong>
+        <span>Original artwork</span>
+      </div>
+      <div class="cart-item-actions">
+        <b>${formatUsd(item.price)}</b>
+        <button type="button" onclick="removeFromCart('${item.id}')" aria-label="Remove ${item.title}">Remove</button>
+      </div>
+    </div>
+  `).join('');
+
   updatePaymentRoute();
+}
+
+function openCart() {
+  const modal = ensureCartModal();
+  renderCart();
   modal.classList.add('active');
   document.body.style.overflow = 'hidden';
 }
+
+function submitPayPalCart() {
+  const form = document.createElement('form');
+  form.method = 'post';
+  form.action = 'https://www.paypal.com/cgi-bin/webscr';
+  form.target = '_self';
+
+  const fields = {
+    cmd: '_cart',
+    upload: '1',
+    business: PAYPAL_BUSINESS,
+    currency_code: 'USD',
+    no_note: '0',
+    no_shipping: '2',
+    return: window.location.origin + window.location.pathname,
+    cancel_return: window.location.href
+  };
+
+  Object.keys(fields).forEach(name => addHiddenField(form, name, fields[name]));
+
+  cartItems.forEach((item, index) => {
+    const n = index + 1;
+    addHiddenField(form, 'item_name_' + n, item.title);
+    addHiddenField(form, 'item_number_' + n, item.id);
+    addHiddenField(form, 'amount_' + n, item.price.toFixed(2));
+    addHiddenField(form, 'quantity_' + n, '1');
+  });
+
+  const shippingIndex = cartItems.length + 1;
+  addHiddenField(form, 'item_name_' + shippingIndex, 'International delivery');
+  addHiddenField(form, 'item_number_' + shippingIndex, 'shipping-international');
+  addHiddenField(form, 'amount_' + shippingIndex, INTERNATIONAL_SHIPPING_USD.toFixed(2));
+  addHiddenField(form, 'quantity_' + shippingIndex, '1');
+
+  document.body.appendChild(form);
+  form.submit();
+}
+
+function addHiddenField(form, name, value) {
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = name;
+  input.value = value;
+  form.appendChild(input);
+}
+
+ensureCartButton();
+renderCart();
