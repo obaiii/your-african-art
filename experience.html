@@ -16,7 +16,6 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=3">
 <link rel="mask-icon" href="mask-icon.svg" color="#C46E4E">
 <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png?v=3">
-<script src="https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js"></script>
 </head>
 <body>
 
@@ -380,75 +379,6 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') document.getElementById('nextBtn').click();
 });
 
-// Shopify Buy Button Integration
-const SHOPIFY_DOMAIN = '7sxcj5-di.myshopify.com';
-const SHOPIFY_TOKEN = '6a68321e8b0de58e7df8870b268858eb';
-
-const shopifyProducts = {
-  'atarci': '8463596224673',
-  'zinat': '8463596257441',
-  'hamid-kadiri': '8463596290209',
-  'hamid-kadiri-2': '8463596322977',
-  'hassan-wakif': '8463596355745',
-  'hassan-wakif-2': '8463596388513',
-  'g-joe': '8463596421281',
-  'g-joe-2': '8463596454049',
-  'g-joe-3': '8463596486817',
-  'nigerian-artist': '8463596519585',
-  'nigerian-artist-2': '8463596552353',
-  'east-africa-1': '8463596585121',
-  'east-africa-2': '8463596617889',
-  'east-africa-3': '8463596650657',
-  'east-africa-4': '8463596683425',
-  'kibuuka': '8463596716193',
-  'kibuuka-steven': '8463596748961',
-  'mutsiwa': '8463596814497',
-  'malawi-1': '8463596847265',
-  'malawi-2': '8463596880033',
-  'malawi-3': '8463596912801'
-};
-
-let shopifyClient = null;
-
-function initShopify() {
-  if (window.ShopifyBuy && !shopifyClient) {
-    shopifyClient = ShopifyBuy.buildClient({
-      domain: SHOPIFY_DOMAIN,
-      storefrontAccessToken: SHOPIFY_TOKEN,
-    });
-  }
-}
-
-function handleBuy(id, title, price) {
-  if (!shopifyClient) {
-    initShopify();
-    if (!shopifyClient) {
-      window.open('https://' + SHOPIFY_DOMAIN + '/products/' + id, '_blank');
-      return;
-    }
-  }
-
-  const shopifyId = shopifyProducts[id];
-  if (!shopifyId) {
-    window.open('https://' + SHOPIFY_DOMAIN, '_blank');
-    return;
-  }
-
-  const storefrontId = btoa('gid://shopify/Product/' + shopifyId);
-
-  shopifyClient.product.fetch(storefrontId).then(function(product) {
-    const variant = product.variants[0];
-    shopifyClient.checkout.create().then(function(checkout) {
-      const lineItems = [{ variantId: variant.id, quantity: 1 }];
-      shopifyClient.checkout.addLineItems(checkout.id, lineItems).then(function(checkout) {
-        window.location.href = checkout.webUrl;
-      });
-    });
-  }).catch(function(err) {
-    console.error('Shopify error:', err);
-    window.open('https://' + SHOPIFY_DOMAIN + '/products/' + id, '_blank');
-  });
-}
 </script>
 <script src="shared.js"></script>
 </body>
