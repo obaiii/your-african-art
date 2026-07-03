@@ -65,24 +65,58 @@ const COUNTRY_OPTIONS = [
 
 const LOCAL_CHECKOUT_COUNTRIES = ['NG'];
 const LOCAL_DELIVERY_CITIES = ['LAGOS', 'ABUJA'];
-const INTERNATIONAL_SHIPPING_USD_BY_COUNTRY = {
-  CA: 175,
-  FR: 155,
-  DE: 155,
-  GH: 115,
-  IT: 155,
-  KE: 130,
-  MA: 135,
-  NL: 155,
-  OTHER: 175,
-  ZA: 125,
-  ES: 155,
-  AE: 145,
-  GB: 155,
-  US: 175
+const DHL_RATE_PROFILES = {
+  CA: { baseUsd: 155, perHalfKgUsd: 32 },
+  FR: { baseUsd: 135, perHalfKgUsd: 28 },
+  DE: { baseUsd: 135, perHalfKgUsd: 28 },
+  GH: { baseUsd: 95, perHalfKgUsd: 18 },
+  IT: { baseUsd: 135, perHalfKgUsd: 28 },
+  KE: { baseUsd: 110, perHalfKgUsd: 22 },
+  MA: { baseUsd: 115, perHalfKgUsd: 24 },
+  NL: { baseUsd: 135, perHalfKgUsd: 28 },
+  OTHER: { baseUsd: 155, perHalfKgUsd: 32 },
+  ZA: { baseUsd: 105, perHalfKgUsd: 20 },
+  ES: { baseUsd: 135, perHalfKgUsd: 28 },
+  AE: { baseUsd: 125, perHalfKgUsd: 25 },
+  GB: { baseUsd: 135, perHalfKgUsd: 28 },
+  US: { baseUsd: 155, perHalfKgUsd: 32 }
 };
 const LOCAL_DELIVERY_NGN = 10000;
 const DISPLAY_USD_TO_NGN = 1600;
+const AUTH_CERTIFICATE_USD_PER_PAINTING = 20;
+const DHL_TUBE_DIAMETER_IN = 2;
+const DHL_TUBE_LENGTH_MARGIN_IN = 2;
+const DHL_TUBE_HANDLING_BUFFER_USD = 20;
+const CM_PER_INCH = 2.54;
+const KG_PER_LB = 0.453592;
+const DHL_VOLUMETRIC_DIVISOR_CM = 5000;
+const ARTWORK_SHIPPING_PROFILES = {
+  'atarci': { widthIn: 22.5, heightIn: 16, weightLb: 1.1 },
+  'zinat': { widthIn: 14, heightIn: 25, weightLb: 1.0 },
+  'hamid-kadiri': { widthIn: 11.8, heightIn: 15.8, weightLb: 0.8 },
+  'hamid-kadiri-2': { widthIn: 10.5, heightIn: 8, weightLb: 0.6 },
+  'hassan-wakif': { widthIn: 25.5, heightIn: 9.5, weightLb: 0.7 },
+  'hassan-wakif-2': { widthIn: 25.5, heightIn: 9.5, weightLb: 0.7 },
+  'g-joe': { widthIn: 17, heightIn: 19, weightLb: 1.2 },
+  'g-joe-2': { widthIn: 17, heightIn: 19, weightLb: 1.2 },
+  'g-joe-3': { widthIn: 19.5, heightIn: 17.5, weightLb: 1.2 },
+  'nigerian-artist': { widthIn: 16, heightIn: 12, weightLb: 0.5 },
+  'nigerian-artist-2': { widthIn: 16, heightIn: 12, weightLb: 0.5 },
+  'east-africa-1': { widthIn: 29, heightIn: 18, weightLb: 1.3 },
+  'east-africa-2': { widthIn: 26, heightIn: 19, weightLb: 1.3 },
+  'east-africa-3': { widthIn: 27, heightIn: 17, weightLb: 1.2 },
+  'east-africa-4': { widthIn: 37, heightIn: 25, weightLb: 1.7 },
+  'kibuuka': { widthIn: 15.25, heightIn: 29, weightLb: 1.1 },
+  'kibuuka-steven': { widthIn: 21, heightIn: 47, weightLb: 1.5 },
+  'mutsiwa': { widthIn: 19.5, heightIn: 27, weightLb: 1.4 },
+  'malawi-1': { widthIn: 13, heightIn: 34, weightLb: 1.0 },
+  'malawi-2': { widthIn: 23, heightIn: 31, weightLb: 1.6 },
+  'malawi-3': { widthIn: 32, heightIn: 22, weightLb: 1.5 }
+};
+const AUTHENTICATION_INSTITUTIONS = {
+  museum: 'Nigerian National Museum, Onikan, Lagos',
+  nike: 'Nike Art Gallery, Lekki, Lagos'
+};
 const DISPLAY_CURRENCY_BY_COUNTRY = {
   US: { currency: 'USD', locale: 'en-US', usdRate: 1 },
   GB: { currency: 'GBP', locale: 'en-GB', usdRate: 0.79 },
@@ -101,6 +135,8 @@ const DISPLAY_CURRENCY_BY_COUNTRY = {
 };
 const CART_STORAGE_KEY = 'yourAfricanArtCart';
 let cartItems = loadCart();
+let includeAuthenticationCertificate = false;
+let selectedAuthenticationInstitution = 'museum';
 
 function loadCart() {
   try {
@@ -150,6 +186,20 @@ function ensureCartModal() {
             <option value="OTHER">Other city</option>
           </select>
         </label>
+        <label class="cart-addon" for="authCertificate">
+          <input type="checkbox" id="authCertificate">
+          <span>
+            <strong>Add painting authentication certificate</strong>
+            <small>$20 per painting. Certificate arranged through the Nigerian National Museum, Onikan, Lagos or Nike Art Gallery, Lekki, Lagos.</small>
+          </span>
+        </label>
+        <label class="payment-field auth-institution-field" for="authInstitution">
+          <span>Certificate institution</span>
+          <select id="authInstitution">
+            <option value="museum">Nigerian National Museum, Onikan</option>
+            <option value="nike">Nike Art Gallery, Lekki</option>
+          </select>
+        </label>
         <div class="payment-totals" id="paymentTotals" aria-live="polite"></div>
         <p class="payment-estimate-note" id="paymentEstimateNote"></p>
         <p class="payment-route-note" id="paymentRouteNote">Choose your delivery country to continue.</p>
@@ -174,6 +224,14 @@ function ensureCartModal() {
   });
   select.addEventListener('change', updatePaymentRoute);
   modal.querySelector('#paymentCity').addEventListener('change', updatePaymentRoute);
+  modal.querySelector('#authCertificate').addEventListener('change', e => {
+    includeAuthenticationCertificate = e.target.checked;
+    updatePaymentRoute();
+  });
+  modal.querySelector('#authInstitution').addEventListener('change', e => {
+    selectedAuthenticationInstitution = e.target.value;
+    updatePaymentRoute();
+  });
   modal.querySelector('#paymentContinueBtn').addEventListener('click', continueToPayPal);
 
   return modal;
@@ -204,35 +262,78 @@ function formatCurrency(amount, currency, locale) {
 function getCheckoutTotals(route, countryCode) {
   if (!cartItems.length) return null;
   const subtotalUsd = getCartSubtotalUsd();
+  const authenticationUsd = includeAuthenticationCertificate
+    ? AUTH_CERTIFICATE_USD_PER_PAINTING * cartItems.length
+    : 0;
   if (route === 'local') {
     const artwork = Math.round(subtotalUsd * DISPLAY_USD_TO_NGN);
+    const authentication = Math.round(authenticationUsd * DISPLAY_USD_TO_NGN);
     const delivery = LOCAL_DELIVERY_NGN;
     return {
       currency: 'NGN',
       artwork,
+      authentication,
       delivery,
-      total: artwork + delivery
+      total: artwork + authentication + delivery
     };
   }
   const profile = DISPLAY_CURRENCY_BY_COUNTRY[countryCode] || DISPLAY_CURRENCY_BY_COUNTRY.OTHER;
-  const shippingUsd = getInternationalShippingUsd(countryCode);
+  const shippingEstimate = getDhlTubeShippingEstimate(countryCode);
+  const shippingUsd = shippingEstimate.amountUsd;
   const artwork = Math.round(subtotalUsd * profile.usdRate);
+  const authentication = Math.round(authenticationUsd * profile.usdRate);
   const delivery = Math.round(shippingUsd * profile.usdRate);
   return {
     currency: profile.currency,
     locale: profile.locale,
     artwork,
+    authentication,
     delivery,
-    total: artwork + delivery,
+    total: artwork + authentication + delivery,
     paypalCurrency: 'USD',
     paypalArtwork: subtotalUsd,
+    paypalAuthentication: authenticationUsd,
     paypalDelivery: shippingUsd,
-    paypalTotal: subtotalUsd + shippingUsd
+    paypalTotal: subtotalUsd + authenticationUsd + shippingUsd,
+    shippingDetail: shippingEstimate
   };
 }
 
-function getInternationalShippingUsd(countryCode) {
-  return INTERNATIONAL_SHIPPING_USD_BY_COUNTRY[countryCode] || INTERNATIONAL_SHIPPING_USD_BY_COUNTRY.OTHER;
+function getDhlTubeShippingEstimate(countryCode) {
+  const profile = DHL_RATE_PROFILES[countryCode] || DHL_RATE_PROFILES.OTHER;
+  const packageProfile = getCartTubePackageProfile();
+  const extraHalfKgUnits = Math.max(0, Math.ceil((packageProfile.chargeableKg - 1) * 2));
+  const amountUsd = profile.baseUsd + DHL_TUBE_HANDLING_BUFFER_USD + (extraHalfKgUnits * profile.perHalfKgUsd);
+  return {
+    amountUsd,
+    chargeableKg: packageProfile.chargeableKg,
+    tubeCount: packageProfile.tubeCount,
+    lengthIn: packageProfile.lengthIn
+  };
+}
+
+function getCartTubePackageProfile() {
+  const profiles = cartItems.map(item => ARTWORK_SHIPPING_PROFILES[item.id]).filter(Boolean);
+  if (!profiles.length) {
+    return { tubeCount: cartItems.length || 1, lengthIn: 20, chargeableKg: 1 };
+  }
+
+  const tubeCount = profiles.length;
+  const lengthIn = Math.max(...profiles.map(profile => getTubeLengthIn(profile)));
+  const widthIn = DHL_TUBE_DIAMETER_IN;
+  const heightIn = DHL_TUBE_DIAMETER_IN * tubeCount;
+  const actualKg = profiles.reduce((sum, profile) => sum + profile.weightLb, 0) * KG_PER_LB;
+  const volumetricKg = (
+    (lengthIn * CM_PER_INCH) *
+    (widthIn * CM_PER_INCH) *
+    (heightIn * CM_PER_INCH)
+  ) / DHL_VOLUMETRIC_DIVISOR_CM;
+  const chargeableKg = Math.max(1, Math.ceil(Math.max(actualKg, volumetricKg) * 2) / 2);
+  return { tubeCount, lengthIn, chargeableKg };
+}
+
+function getTubeLengthIn(profile) {
+  return Math.ceil(Math.min(profile.widthIn, profile.heightIn) + DHL_TUBE_LENGTH_MARGIN_IN);
 }
 
 function renderPaymentTotals(route, countryCode) {
@@ -251,12 +352,13 @@ function renderPaymentTotals(route, countryCode) {
     : amount => formatCurrency(amount, totals.currency, totals.locale);
   totalsEl.innerHTML = `
     <div><span>Artwork</span><strong>${formatter(totals.artwork)}</strong></div>
+    ${totals.authentication ? `<div><span>Authentication certificate</span><strong>${formatter(totals.authentication)}</strong></div>` : ''}
     <div><span>Delivery</span><strong>${formatter(totals.delivery)}</strong></div>
     <div class="payment-total-row"><span>Total</span><strong>${formatter(totals.total)}</strong></div>
   `;
   estimateNote.textContent = route === 'local'
     ? 'Local checkout total shown in NGN.'
-    : 'Estimated local currency total. PayPal checkout is charged in USD and will show the final conversion before you pay.';
+    : `DHL tube estimate for ${totals.shippingDetail.tubeCount} rolled painting${totals.shippingDetail.tubeCount === 1 ? '' : 's'}: ${totals.shippingDetail.lengthIn}" tube length, ${totals.shippingDetail.chargeableKg} kg chargeable weight. PayPal checkout is charged in USD and will show the final conversion before you pay.`;
 }
 
 function updatePaymentRoute() {
@@ -265,6 +367,7 @@ function updatePaymentRoute() {
   const cityField = modal.querySelector('.payment-city-field');
   const citySelect = modal.querySelector('#paymentCity');
   const cityCode = citySelect.value;
+  const authInstitutionField = modal.querySelector('.auth-institution-field');
   const note = modal.querySelector('#paymentRouteNote');
   const configNote = modal.querySelector('#paymentConfigNote');
   const continueBtn = modal.querySelector('#paymentContinueBtn');
@@ -272,6 +375,7 @@ function updatePaymentRoute() {
   configNote.textContent = '';
   continueBtn.disabled = !countryCode;
   cityField.classList.toggle('show', countryCode === 'NG');
+  authInstitutionField.classList.toggle('show', includeAuthenticationCertificate);
 
   if (!countryCode) {
     note.textContent = 'Choose your delivery country to continue.';
@@ -299,12 +403,12 @@ function updatePaymentRoute() {
     }
     continueBtn.disabled = true;
     continueBtn.textContent = 'Paystack checkout coming soon';
-    note.textContent = 'A secure local checkout option is available. Delivery is included for this city.';
+    note.textContent = 'A secure local checkout option is available. Local delivery for this city is included in the total shown.';
     configNote.textContent = 'Paystack checkout will be enabled next for local orders.';
   } else {
     citySelect.value = '';
     continueBtn.textContent = 'Checkout with PayPal';
-    note.textContent = 'You will continue through PayPal secure checkout. International DHL/FedEx delivery is included in the total shown.';
+    note.textContent = 'You will continue through PayPal secure checkout. DHL tube delivery is included in the total shown.';
     if (!PAYPAL_BUSINESS) {
       continueBtn.disabled = true;
       configNote.textContent = 'PayPal merchant ID is needed before live checkout can be enabled.';
@@ -423,10 +527,20 @@ function submitPayPalCart(countryCode) {
   });
 
   const shippingIndex = cartItems.length + 1;
-  addHiddenField(form, 'item_name_' + shippingIndex, 'International delivery');
+  const shippingEstimate = getDhlTubeShippingEstimate(countryCode);
+  addHiddenField(form, 'item_name_' + shippingIndex, 'DHL tube delivery');
   addHiddenField(form, 'item_number_' + shippingIndex, 'shipping-international');
-  addHiddenField(form, 'amount_' + shippingIndex, getInternationalShippingUsd(countryCode).toFixed(2));
+  addHiddenField(form, 'amount_' + shippingIndex, shippingEstimate.amountUsd.toFixed(2));
   addHiddenField(form, 'quantity_' + shippingIndex, '1');
+
+  if (includeAuthenticationCertificate) {
+    const certificateIndex = shippingIndex + 1;
+    const institutionName = AUTHENTICATION_INSTITUTIONS[selectedAuthenticationInstitution] || AUTHENTICATION_INSTITUTIONS.museum;
+    addHiddenField(form, 'item_name_' + certificateIndex, 'Painting authentication certificate - ' + institutionName);
+    addHiddenField(form, 'item_number_' + certificateIndex, 'authentication-certificate');
+    addHiddenField(form, 'amount_' + certificateIndex, AUTH_CERTIFICATE_USD_PER_PAINTING.toFixed(2));
+    addHiddenField(form, 'quantity_' + certificateIndex, String(cartItems.length));
+  }
 
   document.body.appendChild(form);
   form.submit();

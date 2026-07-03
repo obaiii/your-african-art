@@ -189,6 +189,12 @@ footer{background:#1a1a1a;padding:60px 0 40px}
 .payment-field select:focus{border-color:var(--terracotta)}
 .payment-city-field{display:none}
 .payment-city-field.show{display:block}
+.auth-institution-field{display:none}
+.auth-institution-field.show{display:block}
+.cart-addon{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--beige);border-radius:6px;background:#fff;margin:14px 0;padding:12px 14px;cursor:pointer}
+.cart-addon input{width:17px;height:17px;margin-top:2px;accent-color:var(--terracotta);flex-shrink:0}
+.cart-addon strong{display:block;color:var(--charcoal);font-family:'Inter',sans-serif;font-size:.86rem;font-weight:600}
+.cart-addon small{display:block;color:var(--text-light);font-size:.76rem;line-height:1.45;margin-top:4px}
 .payment-totals{border:1px solid var(--beige);border-radius:6px;background:#fff;margin:14px 0;padding:12px 14px}
 .payment-totals:empty{display:none}
 .payment-totals div{display:flex;align-items:center;justify-content:space-between;gap:16px;color:var(--text-light);font-size:.86rem;padding:4px 0}
