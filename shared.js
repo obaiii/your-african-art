@@ -216,7 +216,7 @@ function ensureCartModal() {
           <input type="checkbox" id="authCertificate">
           <span>
             <strong>Add painting authentication certificate</strong>
-            <small>Certificate issued through the Nigerian National Museum, Onikan, Lagos or Nike Art Gallery, Lekki, Lagos. Fee is $20 per painting internationally, or NGN 15,000 per painting for Nigeria checkout.</small>
+            <small id="authCertificateFeeNote"></small>
           </span>
         </label>
         <div class="payment-totals" id="paymentTotals" aria-live="polite"></div>
@@ -307,6 +307,23 @@ function updateLocalizedPriceDisplays() {
   document.querySelectorAll('[data-usd-price]').forEach(el => {
     el.textContent = formatLocalArtworkPrice(el.dataset.usdPrice);
   });
+}
+
+function getAuthenticationFeeText(route, countryCode) {
+  if (route === 'local') {
+    return formatNgn(AUTH_CERTIFICATE_NGN_PER_PAINTING);
+  }
+
+  const profile = getDisplayProfile(countryCode || getDetectedCountryCode());
+  const amount = Math.round(AUTH_CERTIFICATE_USD_PER_PAINTING * profile.usdRate);
+  return formatCurrency(amount, profile.currency, profile.locale);
+}
+
+function updateAuthenticationFeeNote(route, countryCode) {
+  const note = document.getElementById('authCertificateFeeNote');
+  if (!note) return;
+  const feeText = getAuthenticationFeeText(route, countryCode);
+  note.textContent = `Certificate issued through the Nigerian National Museum, Onikan, Lagos or Nike Art Gallery, Lekki, Lagos. Fee is ${feeText} per painting.`;
 }
 
 function getCheckoutTotals(route, countryCode) {
@@ -439,6 +456,7 @@ function updatePaymentRoute() {
   }
 
   const route = getPaymentRoute(countryCode);
+  updateAuthenticationFeeNote(route, countryCode);
   renderPaymentTotals(route, countryCode);
 
   if (route === 'local') {
