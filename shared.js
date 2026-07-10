@@ -43,7 +43,7 @@ function handleEmail(e) {
 
 // ===== CART & PAYMENT ROUTING =====
 const PAYPAL_BUSINESS = 'SG2LRK7JZVVUS';
-const PAYSTACK_PUBLIC_KEY = 'pk_test_dc620a3776b7ebcc93da3a4693d9c87ebe77f8fa';
+const PAYSTACK_PUBLIC_KEY = 'pk_live_b2c6a689e29b3f40082a5a9abd9c0bb69ae1f1fe';
 const PAYSTACK_IS_LIVE = PAYSTACK_PUBLIC_KEY.startsWith('pk_live_');
 const PAYSTACK_ALLOW_TEST_CHECKOUT = !PAYSTACK_IS_LIVE && ['localhost', '127.0.0.1', ''].includes(window.location.hostname);
 const PAYSTACK_SCRIPT_SRC = 'https://js.paystack.co/v2/inline.js';
